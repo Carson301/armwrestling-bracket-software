@@ -140,25 +140,6 @@ class DoubleBracket(Bracket):
             node_pair = node_index - 1
         return node_pair
 
-    def reverse_bracket(self):
-        self.nodes[self.num_nodes - 1].set_next([])
-        for i in range(self.num_nodes - 2, -1, -1):
-            node_list = []
-            for j in range(len(self.nodes[i].get_next().get_next())):
-                node_list.append(self.nodes[i].get_next().get_next()[j])
-            node_list.append(self.nodes[i])
-            self.nodes[i].get_next().set_next(node_list)
-            self.nodes[i].set_next([])
-        for i in range(int((self.num_nodes + 1) / 2)):
-            self.nodes[i].set_next(None)
-
-
-    def reverse_back(self):
-        for i in range(int((self.num_nodes + 1) / 2), self.num_nodes, 1):
-            for node in self.nodes[i].get_next():
-                node.set_next(self.nodes[i])
-        self.nodes[self.num_nodes - 1].set_next(None)
-
     def length_checker(self, node_list):
         count = 0
         for node in node_list:
