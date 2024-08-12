@@ -151,6 +151,9 @@ class DoubleBracket(Bracket):
 
     def match_winner(self, node_index):
         print("winner")
+        if node_index > self.num_nodes - 3:
+            pass
+        #Want to add logic for finals and for semi finals essentially!
         no_pair = False
         if node_index % 2 == 0:  # Determine if node has a partner node has a competitor node ready
             if self.nodes[node_index + 1].get_value() == None or self.nodes[node_index + 1].get_value() == "":
