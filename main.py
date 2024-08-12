@@ -145,7 +145,8 @@ class Tournament:
         global button_num  # Access global variables
         global bracket
         button_num = entry
-        if button_num < bracket.get_num_nodes() - 1:  # Call bracket functions to produce a result to a match given the button pressed
+        if button_num < bracket.get_num_nodes() - 3:  # Call bracket functions to produce a result to a match given the button pressed
+            print(bracket.get_bracket()[button_num].get_value(), bracket.find_next(button_num).get_value())
             if bracket.get_bracket()[button_num].get_value() == bracket.find_next(button_num).get_value():
                 bracket.match_undo(entry)
             else:
