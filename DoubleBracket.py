@@ -140,13 +140,6 @@ class DoubleBracket(Bracket):
             node_pair = node_index - 1
         return node_pair
 
-    def length_checker(self, node_list):
-        count = 0
-        for node in node_list:
-            if node.get_value() != -1:
-                count += 1
-        return count
-
     def find_next(self, node_index):
         return self.nodes[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)]
 
