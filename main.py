@@ -23,7 +23,7 @@ class Tournament:
         global bracket
 
         #bracket = SingleBracket.SingleBracket(["one", "two", "three", "four"])  # Create bracket
-        bracket = DoubleBracket.DoubleBracket(["Collin", "Carson", "Gabe", "Bill", "Garrett", "Glenn", "Dale"])  # Create bracket
+        bracket = DoubleBracket.DoubleBracket(["Collin", "Carson", "Gabe"])  # Create bracket
         bracket.create_bracket()
         bracket.fill_bracket()
         bracket.account_for_bys()
@@ -66,7 +66,7 @@ class Tournament:
         entry_counter = 1
         node_counter = 0
         entry_multiplier = 2
-        if isinstance(bracket, SingleBracket.SingleBracket):
+        if isinstance(bracket, DoubleBracket.DoubleBracket):
             for i in range(bracket.get_num_levels()):  # Create grid layout to hold buttons and labels for bracket
                 self.entries_frame.columnconfigure(i, minsize=self.minimum_size1)
 
@@ -75,18 +75,18 @@ class Tournament:
 
             for level in bracket.get_levels():  # Create bracket in tkinter window using buttons and labels
                 for entry in level:
-                    if entry.get_value() != -1:
+                    if 1 != -1:
                         self.buttons.append(tk.Button(self.entries_frame, text=entry.get_value(), font=('Arial', 5),
                                                       command=lambda node_counter1=node_counter: self.match_result(
                                                           node_counter1)))
                         self.buttons[len(self.buttons) - 1].grid(row=entry_counter, column=level_counter1,
-                                                                 sticky=tk.W + tk.E, padx=5, pady=5)
+                                                                 sticky=tk.W + tk.E, padx=0, pady=0)
                     entry_counter += entry_multiplier
                     node_counter += 1
                 entry_counter = 1 * entry_multiplier
                 entry_multiplier *= 2
                 level_counter1 += 1
-        if isinstance(bracket, DoubleBracket.DoubleBracket):
+        if isinstance(bracket, SingleBracket.SingleBracket):
             for i in range(bracket.get_num_levels()):  # Create grid layout to hold buttons and labels for bracket
                 self.entries_frame.columnconfigure(i, minsize=self.minimum_size1)
 
