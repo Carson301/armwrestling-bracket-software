@@ -24,7 +24,6 @@ class DoubleBracket(Bracket):
         self.competitors = competitors
         self.num_competitors = len(competitors)
         self.num_source_nodes = (self.num_competitors * 4)
-        print(self.num_source_nodes, "here")
 
     def set_loser_starts(self):
         for node in self.nodes:
@@ -123,7 +122,6 @@ class DoubleBracket(Bracket):
             if self.nodes[i].get_value() == "Loser":
                 self.nodes[i].set_value("")
         self.set_loser_starts()
-        print(self.get_num_levels())
 
 
     def find_pair(self, node_index):
@@ -165,9 +163,8 @@ class DoubleBracket(Bracket):
 
 
     def match_winner(self, node_index):
-        print("winner")
         no_pair = False
-        if self.find_pair(node_index) == None or self.find_pair(node_index) == "":
+        if self.nodes[self.find_pair(node_index)].get_value() == None or self.nodes[self.find_pair(node_index)].get_value() == "":
             no_pair = True
         if self.nodes[node_index].get_value() == "X" or self.nodes[self.find_pair(node_index)].get_value() == "X":
             no_pair = True
@@ -183,7 +180,6 @@ class DoubleBracket(Bracket):
                     next_node = self.nodes[math.floor(self.nodes.index(next_node) / 2) + int((self.num_nodes + 1) / 2)]
             next_node = self.nodes[node_index].get_next()
             while next_node != None and next_node.get_value() != None:
-                print(self.nodes.index(next_node))
                 if self.nodes.index(next_node) in self.losers:
                     next_node.set_value("")
                 else:

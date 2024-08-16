@@ -28,13 +28,12 @@ class Tournament:
         bracket.create_bracket()
         bracket.fill_bracket()
         bracket.account_for_bys()
-        print(bracket)
-        self.minimum_size1 = 70
+        self.minimum_size1 = 50
         self.minimum_size2 = 10
 
         self.root = tk.Tk()
-        window_width = str((self.minimum_size1 + 10) * (bracket.get_num_levels()))
-        window_height = str((self.minimum_size2 + 10) * (len(bracket.get_levels()[0]) * 2))
+        window_width = str((self.minimum_size1) * (bracket.get_num_levels()))
+        window_height = str((self.minimum_size2) * (len(bracket.get_levels()[0]) * 3))
         if int(window_width) > 1000:
             window_width = "1000"
         if int(window_height) > 1000:
@@ -64,7 +63,7 @@ class Tournament:
     def draw_bracket(self):
         level_counter1 = 0
         level_counter2 = bracket.get_num_levels() - 1
-        entry_counter = 15
+        entry_counter = 0
         node_counter = 0
         entry_multiplier = 2
         if isinstance(bracket, SingleBracket.SingleBracket):
@@ -88,6 +87,7 @@ class Tournament:
                 entry_multiplier *= 2
                 level_counter1 += 1
         if isinstance(bracket, DoubleBracket.DoubleBracket):
+            entry_counter = 15
             for i in range(bracket.get_num_levels()):  # Create grid layout to hold buttons and labels for bracket
                 self.entries_frame.columnconfigure(i, minsize=self.minimum_size1)
 
@@ -157,8 +157,6 @@ class Tournament:
             self.buttons.clear()  # Reset button list
             self.draw_bracket()
             pressed = False  # Reset pressed
-            if bracket.check_done():
-                print("Done")
 
         self.root.after(100, self.updates)  # Update every 250ms
 
