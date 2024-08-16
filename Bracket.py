@@ -9,7 +9,7 @@ import math
 class Bracket(ABC):
 
     @abstractmethod
-    def __init__(self, competitors):
+    def __init__(self, competitor_list):
         ...
 
     @abstractmethod
@@ -39,7 +39,7 @@ class Bracket(ABC):
     #==================================================================#
 
     def get_bracket(self):
-        return self.nodes
+        return self.node_list
 
     def get_num_competitors(self):
         return self.num_competitors
