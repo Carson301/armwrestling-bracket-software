@@ -8,6 +8,7 @@ import DoubleBracket
 import SingleBracket
 import tkinter as tk
 import threading
+import math
 
 bracket = None
 pressed = False  # Global variables to edit across entire class
@@ -23,7 +24,7 @@ class Tournament:
         global bracket
 
         #bracket = SingleBracket.SingleBracket(["one", "two", "three", "four"])  # Create bracket
-        bracket = DoubleBracket.DoubleBracket(["Collin", "Carson", "Gabe"])  # Create bracket
+        bracket = DoubleBracket.DoubleBracket(["Collin", "Carson", "Gabe", "Bill"])  # Create bracket
         bracket.create_bracket()
         bracket.fill_bracket()
         bracket.account_for_bys()
@@ -63,47 +64,47 @@ class Tournament:
     def draw_bracket(self):
         level_counter1 = 0
         level_counter2 = bracket.get_num_levels() - 1
-        entry_counter = 1
+        entry_counter = 15
         node_counter = 0
         entry_multiplier = 2
-        if isinstance(bracket, DoubleBracket.DoubleBracket):
+        if isinstance(bracket, SingleBracket.SingleBracket):
             for i in range(bracket.get_num_levels()):  # Create grid layout to hold buttons and labels for bracket
                 self.entries_frame.columnconfigure(i, minsize=self.minimum_size1)
 
-            for i in range(bracket.get_num_nodes() + 1):
+            for i in range(bracket.get_num_nodes() + 16):
                 self.entries_frame.rowconfigure(i, minsize=self.minimum_size2)
 
             for level in bracket.get_levels():  # Create bracket in tkinter window using buttons and labels
                 for entry in level:
-                    if 1 != -1:
+                    if entry.get_value() != -1:
                         self.buttons.append(tk.Button(self.entries_frame, text=entry.get_value(), font=('Arial', 5),
                                                       command=lambda node_counter1=node_counter: self.match_result(
                                                           node_counter1)))
                         self.buttons[len(self.buttons) - 1].grid(row=entry_counter, column=level_counter1,
-                                                                 sticky=tk.W + tk.E, padx=0, pady=0)
+                                                                 sticky=tk.W + tk.E, padx=5, pady=5)
                     entry_counter += entry_multiplier
                     node_counter += 1
                 entry_counter = 1 * entry_multiplier
                 entry_multiplier *= 2
                 level_counter1 += 1
-        if isinstance(bracket, SingleBracket.SingleBracket):
+        if isinstance(bracket, DoubleBracket.DoubleBracket):
             for i in range(bracket.get_num_levels()):  # Create grid layout to hold buttons and labels for bracket
                 self.entries_frame.columnconfigure(i, minsize=self.minimum_size1)
 
-            for i in range(int(bracket.get_num_nodes() + 1 / 2)):
+            for i in range(int(bracket.get_num_nodes() + 1 / 2) + 15):
                 self.entries_frame.rowconfigure(i, minsize=self.minimum_size2)
 
             levels = bracket.get_levels()
 
-            entry_counter2 = 1
+            entry_counter2 = 15
             node_counter2 = 0
             entry_multiplier2 = 2
 
-            for i in range(len(levels)):  # Create bracket in tkinter window using buttons and labels
+            for i in range(len(levels) - 2):  # Create bracket in tkinter window using buttons and labels
                 level = levels[i]
                 for j in range(len(level)):
                     if level[j].get_value() != -1:
-                        if j < int(len(level) / 2):
+                        if j < int(len(level) / 4):
                             self.buttons.append(tk.Button(self.entries_frame, text=level[j].get_value(), font=('Arial', 5),
                                                           command=lambda node_counter1=node_counter: self.match_result(
                                                               node_counter1)))
@@ -116,17 +117,38 @@ class Tournament:
                                               node_counter1)))
                             self.buttons[len(self.buttons) - 1].grid(row=entry_counter2, column=level_counter2,
                                                                      sticky=tk.W + tk.E, padx=5, pady=5)
-                    if j < int(len(level) / 2):
+                    if j < int(len(level) / 4):
                         entry_counter += entry_multiplier
                     else:
                         entry_counter2 += entry_multiplier2
                     node_counter += 1
-                entry_counter = 1 * entry_multiplier
+                entry_counter = 14 + entry_multiplier
                 entry_multiplier *= 2
-                entry_counter2 = 1 * entry_multiplier2
+                entry_counter2 = 14 + entry_multiplier2
                 entry_multiplier2 *= 2
                 level_counter1 += 1
                 level_counter2 -= 1
+
+            self.buttons.append(
+                tk.Button(self.entries_frame, text=levels[len(levels) - 2][0].get_value(), font=('Arial', 5),
+                          command=lambda node_counter1=bracket.get_num_nodes() - 3: self.match_result(
+                              node_counter1)))
+            self.buttons[len(self.buttons) - 1].grid(row=4, column=math.floor(bracket.get_num_levels() / 2) - 1,
+                                                     sticky=tk.W + tk.E, padx=5, pady=5)
+
+            self.buttons.append(
+                tk.Button(self.entries_frame, text=levels[len(levels) - 2][1].get_value(), font=('Arial', 5),
+                          command=lambda node_counter1=bracket.get_num_nodes() - 2: self.match_result(
+                              node_counter1)))
+            self.buttons[len(self.buttons) - 1].grid(row=4, column=math.floor(bracket.get_num_levels() / 2) + 1,
+                                                     sticky=tk.W + tk.E, padx=5, pady=5)
+
+            self.buttons.append(
+                tk.Button(self.entries_frame, text=levels[len(levels) - 1][0].get_value(), font=('Arial', 5),
+                          command=lambda node_counter1=bracket.get_num_nodes() - 1: self.match_result(
+                              node_counter1)))
+            self.buttons[len(self.buttons) - 1].grid(row=2, column=math.floor(bracket.get_num_levels() / 2),
+                                                     sticky=tk.W + tk.E, padx=5, pady=5)
     def updates(self):
         global pressed
         global button_num  # Access global variables
