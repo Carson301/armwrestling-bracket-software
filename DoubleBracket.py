@@ -30,9 +30,6 @@ class DoubleBracket(Bracket):
         for node in self.node_list:
             if node.get_value() == "":
                 self.losers_bracket_indexes.append(self.find_index(node))
-        # The second to last node is also a loser index starting node.
-        # It is the Finals losing node for double elimination
-        self.losers_bracket_indexes.append(self.num_nodes - 2)
 
 
     def set_winner_indexes(self):
@@ -57,6 +54,7 @@ class DoubleBracket(Bracket):
         for i in range(self.num_nodes - 1):
             self.node_list[i].set_next(self.node_list[math.floor(current_node)])
             current_node += 0.5  # NOTE: 2 nodes point to a node or a parent
+
         self.set_level_list()
         self.set_winner_indexes()
 
@@ -67,27 +65,24 @@ class DoubleBracket(Bracket):
         num_comp_nodes = int(math.ceil(self.num_nodes / 8))
         # Value representing a midpoint to begin adding to within the bracket
         midpoint = int(num_comp_nodes / 2) + 1
+        # Set both competitor starts and the initial loser starts to there base values
         for i in range(self.num_competitors):
             if i < num_comp_nodes / 2:
-                self.node_list[i * 2].set_value(self.competitor_list[i])  # Fills in one competitor for each pairing
+                self.node_list[i * 2].set_value(self.competitor_list[i])
+                if i < self.num_competitors - 1:
+                    self.node_list[num_comp_nodes + (i * 2)].set_value("")
             else:  # Then fills in competitors beginning at the midpoint and alternating directions per addition
                 if i % 2 == 0:
                     self.node_list[midpoint + math.ceil(offset_value) * 2].set_value(self.competitor_list[i])
+                    if i < self.num_competitors - 1:
+                        self.node_list[midpoint + num_comp_nodes + math.ceil(offset_value) * 2].set_value("")
                 else:
                     self.node_list[midpoint - math.ceil(offset_value) * 2].set_value(self.competitor_list[i])
+                    if i < self.num_competitors - 1:
+                        self.node_list[midpoint + num_comp_nodes - math.ceil(offset_value) * 2].set_value("")
                 offset_value = offset_value + 0.5
-        offset_value = 0
-
-        for i in range(self.num_competitors - 1):
-            if i < num_comp_nodes / 2:
-                self.node_list[num_comp_nodes + (i * 2)].set_value("Loser")  # Fills in one competitor for each pairing
-            else:  # Then fills in competitors beginning at the midpoint and alternating directions per addition
-                if i % 2 == 0:
-                    self.node_list[midpoint + num_comp_nodes + math.ceil(offset_value) * 2].set_value("Loser")
-                else:
-                    self.node_list[midpoint + num_comp_nodes - math.ceil(offset_value) * 2].set_value("Loser")
-                offset_value = offset_value + 0.5
-        self.node_list[self.num_nodes - 2].set_value("Loser")
+        # Set the final loser node for the finals to ""
+        self.node_list[self.num_nodes - 2].set_value("")
 
 
 
@@ -120,9 +115,6 @@ class DoubleBracket(Bracket):
             if current_node.get_value() != -1 and partner_node.get_value() == -1:
                 partner_node.get_next().set_value(current_node.get_value())
                 current_node.set_value(-1)
-        for i in range(self.num_nodes):
-            if self.node_list[i].get_value() == "Loser":
-                self.node_list[i].set_value("")
         self.set_loser_starts()
 
 
