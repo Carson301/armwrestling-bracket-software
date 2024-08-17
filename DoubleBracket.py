@@ -111,40 +111,12 @@ class DoubleBracket(Bracket):
 
 
     def find_pair(self, node_index):
-        node_pair = 0
-        if node_index % 2 == 0:  # Determine if node has a partner node has a competitor node ready
-            node_pair = node_index + 1
+        if node_index % 2 == 0:
+            return node_index + 1
         else:
-            node_pair = node_index - 1
-        return node_pair
+            return node_index - 1
 
-    def reverse_bracket(self):
-        self.node_list[self.num_nodes - 1].set_next([])
-        for i in range(self.num_nodes - 2, -1, -1):
-            node_list = []
-            for j in range(len(self.node_list[i].get_next().get_next())):
-                node_list.append(self.node_list[i].get_next().get_next()[j])
-            node_list.append(self.node_list[i])
-            self.node_list[i].get_next().set_next(node_list)
-            self.node_list[i].set_next([])
-        for i in range(int((self.num_nodes + 1) / 2)):
-            self.node_list[i].set_next(None)
-
-
-    def reverse_back(self):
-        for i in range(int((self.num_nodes + 1) / 2), self.num_nodes, 1):
-            for node in self.node_list[i].get_next():
-                node.set_next(self.node_list[i])
-        self.node_list[self.num_nodes - 1].set_next(None)
-
-    def length_checker(self, node_list):
-        count = 0
-        for node in node_list:
-            if node.get_value() != -1:
-                count += 1
-        return count
-
-    def find_next(self, node_index):
+    def find_default_next(self, node_index):
         return self.node_list[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)]
 
 
