@@ -23,13 +23,13 @@ class Tournament:
 
         global bracket
 
-        #bracket = SingleBracket.SingleBracket(["one", "two", "three", "four"])  # Create bracket
+        #bracket = SingleBracket.SingleBracket(["one", "two", "three", "four", "five", "t", "e", "u"])  # Create bracket
         bracket = DoubleBracket.DoubleBracket(["Collin", "Carson", "Gabe", "Bill"])  # Create bracket
         bracket.create_bracket()
         bracket.fill_bracket()
         bracket.account_for_bys()
-        self.minimum_size1 = 50
-        self.minimum_size2 = 10
+        self.minimum_size1 = 75
+        self.minimum_size2 = 25
 
         self.root = tk.Tk()
         window_width = str((self.minimum_size1) * (bracket.get_num_levels()))
@@ -63,7 +63,7 @@ class Tournament:
     def draw_bracket(self):
         level_counter1 = 0
         level_counter2 = bracket.get_num_levels() - 1
-        entry_counter = 0
+        entry_counter = 2
         node_counter = 0
         entry_multiplier = 2
         if isinstance(bracket, SingleBracket.SingleBracket):
@@ -83,20 +83,21 @@ class Tournament:
                                                                  sticky=tk.W + tk.E, padx=5, pady=5)
                     entry_counter += entry_multiplier
                     node_counter += 1
-                entry_counter = 1 * entry_multiplier
+                entry_counter = 1 + entry_multiplier
                 entry_multiplier *= 2
                 level_counter1 += 1
+        entry_counter = 0
         if isinstance(bracket, DoubleBracket.DoubleBracket):
-            entry_counter = 15
+            entry_counter = 6
             for i in range(bracket.get_num_levels()):  # Create grid layout to hold buttons and labels for bracket
                 self.entries_frame.columnconfigure(i, minsize=self.minimum_size1)
 
-            for i in range(int(bracket.get_num_nodes() + 1 / 2) + 15):
+            for i in range(int(bracket.get_num_nodes() + 1 / 2) + 5):
                 self.entries_frame.rowconfigure(i, minsize=self.minimum_size2)
 
             levels = bracket.get_level_list()
 
-            entry_counter2 = 15
+            entry_counter2 = 5
             node_counter2 = 0
             entry_multiplier2 = 2
 
@@ -122,9 +123,9 @@ class Tournament:
                     else:
                         entry_counter2 += entry_multiplier2
                     node_counter += 1
-                entry_counter = 14 + entry_multiplier
+                entry_counter = 5 + entry_multiplier
                 entry_multiplier *= 2
-                entry_counter2 = 14 + entry_multiplier2
+                entry_counter2 = 5 + entry_multiplier2
                 entry_multiplier2 *= 2
                 level_counter1 += 1
                 level_counter2 -= 1
