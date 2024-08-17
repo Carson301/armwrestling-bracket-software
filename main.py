@@ -23,8 +23,8 @@ class Tournament:
 
         global bracket
 
-        #bracket = SingleBracket.SingleBracket(["one", "two", "three", "four", "five", "t", "e", "u"])  # Create bracket
-        bracket = DoubleBracket.DoubleBracket(["Collin", "Carson", "Gabe", "Bill"])  # Create bracket
+        bracket = SingleBracket.SingleBracket(["Devon Larratt", "Carson King", "Collin King", "Jerry Cadorette", "Johnny"])  # Create bracket
+        #bracket = DoubleBracket.DoubleBracket(["Collin", "Carson", "Gabe", "Bill"])  # Create bracket
         bracket.create_bracket()
         bracket.fill_bracket()
         bracket.account_for_bys()
@@ -32,22 +32,27 @@ class Tournament:
         self.minimum_size2 = 25
 
         self.root = tk.Tk()
-        window_width = str((self.minimum_size1) * (bracket.get_num_levels()))
-        window_height = str((self.minimum_size2) * (len(bracket.get_level_list()[0]) * 3))
+        window_width = "1000"
+        window_height = "500"
         if int(window_width) > 1000:
             window_width = "1000"
         if int(window_height) > 1000:
             window_height = "1000"
         self.root.geometry(window_width + "x" + window_height)  # Sets dimensions of window
+        self.root.minsize(width=bracket.get_num_levels() * 75, height=((len(bracket.get_level_list()[0]) * 2) + 4) * 25)
         self.root.title("Arm Wrestling Tournament")  # Gives the window a title
 
-        self.title_label = tk.Label(self.root, text="Arm Wrestling Tournament", font=('Arial', 5, 'bold')) # Gives another title for the window, but inside the window
+        self.title_label = tk.Label(self.root, text="Arm Wrestling Tournament", font=('Impact', 10), fg="white") # Gives another title for the window, but inside the window
         self.title_label.pack(padx=1, pady=1)
 
 
 
         self.entries_frame = tk.Frame(self.root)
-        self.entries_frame.pack(fill='x')  # Packs entries frame so objects fill the x axis
+        self.entries_frame.pack(fill='x', expand=True)  # Packs entries frame so objects fill the x axis
+
+        self.entries_frame.configure(bg="Azure")
+        self.root.configure(bg="SpringGreen4")
+        self.title_label.configure(bg="SpringGreen4", pady=5)
 
         self.draw_bracket()
 
@@ -68,15 +73,15 @@ class Tournament:
         entry_multiplier = 2
         if isinstance(bracket, SingleBracket.SingleBracket):
             for i in range(bracket.get_num_levels()):  # Create grid layout to hold buttons and labels for bracket
-                self.entries_frame.columnconfigure(i, minsize=self.minimum_size1)
+                self.entries_frame.columnconfigure(i, minsize=75, weight=1)
 
             for i in range(bracket.get_num_nodes() + 16):
-                self.entries_frame.rowconfigure(i, minsize=self.minimum_size2)
+                self.entries_frame.rowconfigure(i, minsize=25, weight=1)
 
             for level in bracket.get_level_list():  # Create bracket in tkinter window using buttons and labels
                 for entry in level:
                     if entry.get_value() != -1:
-                        self.buttons.append(tk.Button(self.entries_frame, text=entry.get_value(), font=('Arial', 5),
+                        self.buttons.append(tk.Button(self.entries_frame, background="springgreen3", activebackground="springgreen4", text=entry.get_value(), font=('Arial', 5),
                                                       command=lambda node_counter1=node_counter: self.match_result(
                                                           node_counter1)))
                         self.buttons[len(self.buttons) - 1].grid(row=entry_counter, column=level_counter1,
