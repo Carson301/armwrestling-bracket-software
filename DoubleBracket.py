@@ -3,13 +3,11 @@
 # 2024
 
 from Bracket import Bracket
-
 import math
 import Node
 
 
 class DoubleBracket(Bracket):
-
     competitor_list = []
     node_list = []
     level_list = []
@@ -18,29 +16,8 @@ class DoubleBracket(Bracket):
     winners_bracket_indexes = []
     losers_bracket_indexes = []
 
-
-
-
-    def find_index(self, node):
-        return self.node_list.index(node)
-
-
-    def set_loser_starts(self):
-        # Every node that holds "" is a loser index starting node
-        for node in self.node_list:
-            if node.get_value() == "":
-                self.losers_bracket_indexes.append(self.find_index(node))
-
-
-    def set_winner_indexes(self):
-        # For each level only add the first quarter of nodes rounded up to the winner_indexes
-        for level in self.level_list:
-            for i in range(math.ceil(len(level) / 4)):
-                self.winners_bracket_indexes.append(self.node_list.index(level[i]))
-
-    def get_winner_indexes(self):
-        return self.winners_bracket_indexes
-
+    # ================================================================================================================ #
+    # Bracket Set-Up Methods
 
     def create_bracket(self):
         # Calculates the number of nodes for a complete bracket given a number of competitors
@@ -84,8 +61,6 @@ class DoubleBracket(Bracket):
         # Set the final loser node for the finals to ""
         self.node_list[self.num_nodes - 2].set_value("")
 
-
-
     def account_for_bys(self):
         # Set each nodes next node to what it equals
         for i in range(self.num_nodes - 1):
@@ -109,21 +84,8 @@ class DoubleBracket(Bracket):
                 current_node.set_value(-1)
         self.set_loser_starts()
 
-
-    def find_pair(self, node_index):
-        if node_index % 2 == 0:
-            return node_index + 1
-        else:
-            return node_index - 1
-
-    def find_default_next(self, node_index):
-        return self.node_list[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)]
-
-    def check_if_pair(self, node_index):
-        if self.node_list[self.find_pair(node_index)].get_value() is None or self.node_list[self.find_pair(node_index)].get_value() == "" or self.node_list[node_index].get_value() == "X" or self.node_list[self.find_pair(node_index)].get_value() == "X":
-            return False
-        else:
-            return True
+    # ================================================================================================================ #
+    # Bracket Altering Methods
 
     def reset_nodes(self, node_index):
         next_node1 = self.find_default_next(node_index)
@@ -163,7 +125,8 @@ class DoubleBracket(Bracket):
                     same_value = True
             if not same_value:
                 self.node_list[loser_index].set_value("")
-        # After resetting loser bracket starting indexes apply same logic that was applied to winners to reset nodes pointing direction
+        # After resetting loser bracket starting indexes apply same logic that was applied to winners to
+        # reset nodes pointing direction
         for i in range(self.num_nodes - 1, int((self.num_nodes + 1) / 2), -1):
             if self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].get_value() is None or self.node_list[
                 (i - int((self.num_nodes + 1) / 2)) * 2].get_value() == "" or self.node_list[
@@ -203,12 +166,57 @@ class DoubleBracket(Bracket):
             self.node_list[node_pair].set_next(self.node_list[loser_index])
             self.node_list[loser_index].set_value(self.node_list[node_pair].get_value())
         # Accounts for Finals logic when winning
-        if node_index == self.num_nodes - 7 and node_index in self.winners_bracket_indexes and self.find_pair(node_index) not in self.winners_bracket_indexes:
+        if node_index == self.num_nodes - 7 and node_index in self.winners_bracket_indexes and self.find_pair(
+                node_index) not in self.winners_bracket_indexes:
             self.node_list[node_index].get_next().get_next().set_value(self.node_list[node_index].get_value())
             self.node_list[self.num_nodes - 2].set_value("X")
 
     def match_undo(self, node_index):
         self.reset_nodes(node_index)
+
+    # ================================================================================================================ #
+    # Helper Functions
+
+    def find_index(self, node):
+        return self.node_list.index(node)
+
+    def find_pair(self, node_index):
+        if node_index % 2 == 0:
+            return node_index + 1
+        else:
+            return node_index - 1
+
+    def find_default_next(self, node_index):
+        return self.node_list[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)]
+
+    def check_if_pair(self, node_index):
+        if self.node_list[self.find_pair(node_index)].get_value() is None or self.node_list[
+            self.find_pair(node_index)].get_value() == "" or self.node_list[node_index].get_value() == "X" or \
+                self.node_list[self.find_pair(node_index)].get_value() == "X":
+            return False
+        else:
+            return True
+
+    def check_done(self):
+        if self.node_list[self.num_nodes - 1].get_value() is not None:
+            return True
+        else:
+            return False
+
+    # ================================================================================================================ #
+    # Setters and Getters
+
+    def set_loser_starts(self):
+        # Every node that holds "" is a loser index starting node
+        for node in self.node_list:
+            if node.get_value() == "":
+                self.losers_bracket_indexes.append(self.find_index(node))
+
+    def set_winner_indexes(self):
+        # For each level only add the first quarter of nodes rounded up to the winner_indexes
+        for level in self.level_list:
+            for i in range(math.ceil(len(level) / 4)):
+                self.winners_bracket_indexes.append(self.node_list.index(level[i]))
 
     def set_level_list(self):
         self.level_list, level = [], []
@@ -235,21 +243,21 @@ class DoubleBracket(Bracket):
         # Add the final level to levels
         self.level_list.append(level)
 
+    def get_num_nodes(self):
+        return self.num_nodes
+
+    def get_winner_indexes(self):
+        return self.winners_bracket_indexes
+
     def get_level_list(self):
         return self.level_list
-
-    def check_done(self):
-        if self.node_list[len(self.node_list) - 1].get_value() != None:
-            return True
-        else:
-            return False
 
     def get_num_levels(self):
         # The number of levels for a double elimination bracket representation
         return (len(self.get_level_list()) * 2) - 1
 
-    def get_num_nodes(self):
-        return self.num_nodes
+    # ================================================================================================================ #
+    # To String Method
 
     def __str__(self):
         nodes_string = ""
