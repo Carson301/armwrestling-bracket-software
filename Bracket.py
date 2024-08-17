@@ -8,9 +8,10 @@ import math
 
 class Bracket(ABC):
 
-    @abstractmethod
+
     def __init__(self, competitor_list):
-        ...
+        self.competitor_list = competitor_list
+        self.num_competitors = len(competitor_list)
 
     @abstractmethod
     def create_bracket(self):
@@ -52,7 +53,11 @@ class Bracket(ABC):
         ...
 
     @abstractmethod
-    def get_levels(self):
+    def set_level_list(self):
+        ...
+
+    @abstractmethod
+    def get_level_list(self):
         ...
 
 

@@ -12,27 +12,32 @@ class DoubleBracket(Bracket):
 
     competitor_list = []
     node_list = []
+    level_list = []
     num_competitors = 0
     num_nodes = 0
-    num_source_nodes = 0
     winners_bracket_indexes = []
     losers_bracket_indexes = []
 
 
-    def __init__(self, competitor_list):
-        self.competitor_list = competitor_list
-        self.num_competitors = len(competitor_list)
-        self.num_source_nodes = (self.num_competitors * 4)
+
+
+    def find_index(self, node):
+        return self.node_list.index(node)
+
 
     def set_loser_starts(self):
+        # Every node that holds "" is a loser index starting node
         for node in self.node_list:
             if node.get_value() == "":
-                self.losers_bracket_indexes.append(self.node_list.index(node))
+                self.losers_bracket_indexes.append(self.find_index(node))
+        # The second to last node is also a loser index starting node.
+        # It is the Finals losing node for double elimination
         self.losers_bracket_indexes.append(self.num_nodes - 2)
 
+
     def set_winner_indexes(self):
-        levels = self.get_levels()
-        for level in levels:
+        # For each level only add the first quarter of nodes rounded up to the winner_indexes
+        for level in self.level_list:
             for i in range(math.ceil(len(level) / 4)):
                 self.winners_bracket_indexes.append(self.node_list.index(level[i]))
 
@@ -42,19 +47,17 @@ class DoubleBracket(Bracket):
 
     def create_bracket(self):
         # Calculates the number of nodes for a complete bracket given a number of competitors
-        self.num_nodes = (2 ** (math.ceil(math.log(self.num_source_nodes, 2)) + 1) - 1)
-        # Add that many empty nodes to a list
+        self.num_nodes = (2 ** (math.ceil(math.log(self.num_competitors * 4, 2)) + 1) - 1)
+        # Add empty nodes to node_list
         for i in range(self.num_nodes):
-            self.node_list.append(Node.Node(i))
+            self.node_list.append(Node.Node(None))
         # Calculate the index of the first node on the next level of the bracket
         current_node = math.ceil(self.num_nodes / 2)
         # Has nodes point to one another to create a bracket structure
         for i in range(self.num_nodes - 1):
             self.node_list[i].set_next(self.node_list[math.floor(current_node)])
             current_node += 0.5  # NOTE: 2 nodes point to a node or a parent
-        # Set every node's value to None
-        for i in range(len(self.node_list)):
-            self.node_list[i].set_value(None)
+        self.set_level_list()
         self.set_winner_indexes()
 
     def fill_bracket(self):
@@ -281,6 +284,35 @@ class DoubleBracket(Bracket):
                     self.node_list[((i - int((self.num_nodes + 1) / 2)) * 2) + 1].set_next(self.node_list[i])
 
 
+
+    def set_level_list(self):
+        self.level_list, level = [], []
+        # Index of the current node being evaluated
+        current_node = 0
+        # The current range of nodes for the current level
+        current_node_range = math.floor(self.num_nodes / 2)
+        # The number of nodes that the current level has
+        nodes_per_level = math.ceil(self.num_nodes / 2)
+        for node in self.node_list:  # Separate the nodes into a series of levels as is the structure of the bracket
+            # If the current node is within the node range add it to the level
+            if current_node <= current_node_range:
+                level.append(node)
+            else:
+                # Add finished level to levels
+                self.level_list.append(level)
+                # Halve the level_count for the next level
+                nodes_per_level = nodes_per_level / 2
+                # Update the node range by adding the new level count
+                current_node_range = current_node_range + nodes_per_level
+                # Reset level and add the newest node to it
+                level = [node]
+            current_node += 1
+        # Add the final level to levels
+        self.level_list.append(level)
+
+    def get_level_list(self):
+        return self.level_list
+
     def check_done(self):
         if self.node_list[len(self.node_list) - 1].get_value() != None:
             return True
@@ -288,29 +320,11 @@ class DoubleBracket(Bracket):
             return False
 
     def get_num_levels(self):
-        return (math.ceil(math.log(self.num_competitors * 2, 2)) * 2) + 1  # Returns the number of levels the bracket has
+        # The number of levels for a double elimination bracket representation
+        return (len(self.get_level_list()) * 2) - 1
 
     def get_num_nodes(self):
         return self.num_nodes
-
-    def get_levels(self):
-        levels = []
-        level = []
-        current_node = 0
-        node_range = math.floor(self.num_nodes / 2)
-        level_count = math.ceil(self.num_nodes / 2)
-        for node in self.node_list:  # Separate the nodes into a series of levels as is the structure of the bracket
-            if current_node <= node_range:
-                level.append(node)
-            else:
-                levels.append(level)
-                level = []
-                level_count = level_count / 2
-                node_range = node_range + level_count
-                level.append(node)
-            current_node += 1
-        levels.append(level)
-        return levels
 
     def __str__(self):
         nodes_string = ""

@@ -123,7 +123,6 @@ class SingleBracket(Bracket):
         current_node = 0
         node_range = math.floor(self.num_nodes / 2)
         level_count = math.ceil(self.num_nodes / 2)
-        print(level_count, node_range)
         for node in self.nodes:  # Separate the nodes into a series of levels as is the structure of the bracket
             if current_node <= node_range:
                 level.append(node)

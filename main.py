@@ -33,7 +33,7 @@ class Tournament:
 
         self.root = tk.Tk()
         window_width = str((self.minimum_size1) * (bracket.get_num_levels()))
-        window_height = str((self.minimum_size2) * (len(bracket.get_levels()[0]) * 3))
+        window_height = str((self.minimum_size2) * (len(bracket.get_level_list()[0]) * 3))
         if int(window_width) > 1000:
             window_width = "1000"
         if int(window_height) > 1000:
@@ -73,7 +73,7 @@ class Tournament:
             for i in range(bracket.get_num_nodes() + 16):
                 self.entries_frame.rowconfigure(i, minsize=self.minimum_size2)
 
-            for level in bracket.get_levels():  # Create bracket in tkinter window using buttons and labels
+            for level in bracket.get_level_list():  # Create bracket in tkinter window using buttons and labels
                 for entry in level:
                     if entry.get_value() != -1:
                         self.buttons.append(tk.Button(self.entries_frame, text=entry.get_value(), font=('Arial', 5),
@@ -94,7 +94,7 @@ class Tournament:
             for i in range(int(bracket.get_num_nodes() + 1 / 2) + 15):
                 self.entries_frame.rowconfigure(i, minsize=self.minimum_size2)
 
-            levels = bracket.get_levels()
+            levels = bracket.get_level_list()
 
             entry_counter2 = 15
             node_counter2 = 0
