@@ -87,29 +87,21 @@ class DoubleBracket(Bracket):
 
 
     def account_for_bys(self):
-        pass
-        for i in range(0, self.num_nodes - 2, 2):  # Go through all nodes and check for instances of bys. Update bracket accordingly.
+        # Set each nodes next node to what it equals
+        for i in range(self.num_nodes - 1):
             current_node = self.node_list[i]
-            partner_node = self.node_list[self.find_pair(i)]
-            if self.node_list.index(current_node.get_next()) != self.num_nodes - 2:
-                if current_node.get_value() == None and partner_node.get_value() == None:
+            if self.node_list.index(current_node.get_next()) != self.num_nodes - 1:
+                if current_node.get_value() is None:
                     current_node.set_value(-1)
-                    partner_node.set_value(-1)
-                    current_node.get_next().set_value(-1)
-                elif current_node.get_value() != None and partner_node.get_value() == None:
-                    partner_node.set_value(-1)
-                    current_node.get_next().set_value(current_node.get_value())
-                elif current_node.get_value() == None and partner_node.get_value() != None:
-                    current_node.set_value(-1)
-                    partner_node.get_next().set_value(partner_node.get_value())
                 else:
-                    current_node.get_next().set_value(-1)
-        self.node_list[self.num_nodes - 1].set_value(None)
-        for i in range(self.num_nodes - 2):  # Set empty nodes not due to bys back to None
+                    current_node.get_next().set_value(current_node.get_value())
+        # Set empty nodes not due to bys back to None
+        for i in range(self.num_nodes - 2):
             current_node = self.node_list[i]
             if current_node.get_value() != -1:
                 current_node.get_next().set_value(None)
-        for i in range(self.num_nodes - 2):  # Automatically advance node in bracket if paired with a by node
+        # Automatically advance node in bracket if paired with a by node
+        for i in range(self.num_nodes - 2):
             current_node = self.node_list[i]
             partner_node = self.node_list[self.find_pair(i)]
             if current_node.get_value() != -1 and partner_node.get_value() == -1:
