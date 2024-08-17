@@ -25,7 +25,9 @@ class Tournament:
         global bracket
 
         bracket = SingleBracket.SingleBracket(["Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
-                                               ])  # Create bracket
+                                               "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
+                                               "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
+                                               "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette"])  # Create bracket
         #bracket = DoubleBracket.DoubleBracket(["Collin", "Carson", "Gabe", "Bill"])  # Create bracket
         bracket.create_bracket()
         bracket.fill_bracket()
@@ -90,23 +92,34 @@ class Tournament:
                 self.entries_frame.columnconfigure(i, minsize=125, weight=0)
 
             for i in range(bracket.get_num_nodes() + 16):
-                self.entries_frame.rowconfigure(i, minsize=5, weight=0)
-
-            draw_line = True
+                self.entries_frame.rowconfigure(i, minsize=20, weight=0)
+            middle = 1
+            draw_line = False
+            switcher = False
+            count = 1
 
             for level in bracket.get_level_list():  # Create bracket in tkinter window using buttons and labels
+                if not switcher:
+                    middle = (middle + 5) * 2
+                else:
+                    middle = ((middle + 5) * 2) + count
+                    count = count * 2
+                switcher = not switcher
                 for entry in level:
-                    if entry.get_value() != -1:
+                    if 1 != -1:
                         self.buttons.append(tk.Button(self.entries_frame, background="springgreen3", activebackground="springgreen4", fg="white", text=entry.get_value(), font=('Impact', 7),
                                                       command=lambda node_counter1=node_counter: self.match_result(
                                                           node_counter1)))
                         self.buttons[len(self.buttons) - 1].grid(row=entry_counter, column=level_counter1,
-                                                                 sticky=tk.W + tk.E, pady=0, padx=3)
-                        if draw_line and bracket.find_index(entry) != bracket.get_num_nodes() - 1:
-                            self.lines.append(tk.Canvas(self.entries_frame, width=125, height=35 * entry_multiplier, bg="Azure", highlightthickness=0))
-                            self.lines[len(self.lines) - 1].grid(row=entry_counter + 1, rowspan=entry_multiplier, column=level_counter1)
-                            self.lines[len(self.lines) - 1].create_line(115, 0, 115, 35 * (entry_multiplier - 1), width=5)
-                            self.lines[len(self.lines) - 1].create_line(115, 17.5 * (entry_multiplier - 1), 125, 17.5 * (entry_multiplier - 1), width=5)
+                                                                 sticky=tk.W + tk.E, pady=0, padx=0)
+                        if draw_line and entry.get_value() != -1 and bracket.find_index(entry) != bracket.get_num_nodes() - 1:
+                            self.lines.append(tk.Canvas(self.entries_frame, width=125, height=20 * (entry_multiplier - 1), bg="Azure"))
+                            self.lines[len(self.lines) - 1].grid(row=entry_counter - entry_multiplier + 1, rowspan=entry_multiplier - 1, sticky=tk.N+tk.S, column=level_counter1)
+                            print(20 * entry_multiplier, 10 * entry_multiplier)
+                            self.lines[len(self.lines) - 1].create_line(115, 0, 115, 20 * (entry_multiplier + 10), width=5)
+                            print(middle)
+                            self.lines[len(self.lines) - 1].create_line(115, middle, 125, middle, width=5) # 12 35 80 173 357 / 2 - 5
+                            #                                                                        24 70
                         draw_line = not draw_line
                     entry_counter += entry_multiplier
                     node_counter += 1
