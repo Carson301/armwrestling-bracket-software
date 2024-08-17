@@ -107,6 +107,13 @@ class SingleBracket(Bracket):
         else:
             return node_index - 1
 
+    def find_pair_node(self, node):
+        node_index = self.find_index(node)
+        if node_index % 2 == 0:
+            return self.node_list[node_index + 1]
+        else:
+            return self.node_list[node_index - 1]
+
     def check_if_pair(self, node_index):
         if self.node_list[self.find_pair(node_index)].get_value() is None:
             return False
