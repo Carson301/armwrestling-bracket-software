@@ -26,11 +26,11 @@ class Bracket(ABC):
         ...
 
     @abstractmethod
-    def match_winner(self):
+    def match_winner(self, node_index):
         ...
 
     @abstractmethod
-    def match_undo(self):
+    def match_undo(self, node_index):
         ...
 
     @abstractmethod

@@ -119,127 +119,96 @@ class DoubleBracket(Bracket):
     def find_default_next(self, node_index):
         return self.node_list[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)]
 
+    def check_if_pair(self, node_index):
+        if self.node_list[self.find_pair(node_index)].get_value() is None or self.node_list[self.find_pair(node_index)].get_value() == "" or self.node_list[node_index].get_value() == "X" or self.node_list[self.find_pair(node_index)].get_value() == "X":
+            return False
+        else:
+            return True
+
+    def reset_nodes(self, node_index):
+        next_node1 = self.find_default_next(node_index)
+        next_node2 = self.node_list[node_index].get_next()
+
+        for i in range(self.num_nodes):
+            # Reset every node that is pointed to by the current node
+            if next_node1 is not None and next_node1.get_value() is not None:
+                if self.node_list.index(next_node1) in self.losers_bracket_indexes:
+                    next_node1.set_value("")
+                else:
+                    next_node1.set_value(None)
+                if math.floor(self.node_list.index(next_node1) / 2) + int(
+                        (self.num_nodes + 1) / 2) + 1 < self.num_nodes + 1:
+                    next_node1 = self.node_list[
+                        math.floor(self.node_list.index(next_node1) / 2) + int((self.num_nodes + 1) / 2)]
+            # Reset every node that the current node would point to by default
+            if next_node2 is not None and next_node2.get_value() is not None:
+                if self.node_list.index(next_node2) in self.losers_bracket_indexes:
+                    next_node2.set_value("")
+                else:
+                    next_node2.set_value(None)
+                if math.floor(self.node_list.index(next_node2) / 2) + int(
+                        (self.num_nodes + 1) / 2) + 1 < self.num_nodes + 1:
+                    next_node2 = self.node_list[
+                        math.floor(self.node_list.index(next_node2) / 2) + int((self.num_nodes + 1) / 2)]
+            # Reset nodes that point that by default point to nothing back to that default
+            if int((self.num_nodes + 1) / 2) > self.num_nodes - i < self.num_nodes - 1:
+                if self.node_list[i].get_value() is None or self.node_list[i].get_value() == "":
+                    self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].set_next(self.node_list[i])
+                    self.node_list[((i - int((self.num_nodes + 1) / 2)) * 2) + 1].set_next(self.node_list[i])
+        # Reset loser bracket starting indexes
+        for loser_index in self.losers_bracket_indexes:
+            same_value = False
+            for winner_index in self.winners_bracket_indexes:
+                if self.node_list[winner_index].get_next() == self.node_list[loser_index]:
+                    same_value = True
+            if not same_value:
+                self.node_list[loser_index].set_value("")
+        # After resetting loser bracket starting indexes apply same logic that was applied to winners to reset nodes pointing direction
+        for i in range(self.num_nodes - 1, int((self.num_nodes + 1) / 2), -1):
+            if self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].get_value() is None or self.node_list[
+                (i - int((self.num_nodes + 1) / 2)) * 2].get_value() == "" or self.node_list[
+                ((i - int((self.num_nodes + 1) / 2)) * 2) + 1].get_value() is None or self.node_list[
+                ((i - int((self.num_nodes + 1) / 2)) * 2) + 1].get_value() == "":
+                if i in self.losers_bracket_indexes:
+                    self.node_list[i].set_value("")
+                else:
+                    self.node_list[i].set_value(None)
+                self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].set_next(self.node_list[i])
+                self.node_list[((i - int((self.num_nodes + 1) / 2)) * 2) + 1].set_next(self.node_list[i])
+
+        self.node_list[node_index].set_next(self.node_list[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)])
 
     def match_winner(self, node_index):
-        no_pair = False
-        if self.node_list[self.find_pair(node_index)].get_value() == None or self.node_list[self.find_pair(node_index)].get_value() == "":
-            no_pair = True
-        if self.node_list[node_index].get_value() == "X" or self.node_list[self.find_pair(node_index)].get_value() == "X":
-            no_pair = True
-        if no_pair == False:  # As long as there is competitor node ready
-            node_pair = self.find_pair(node_index)
-            next_node = self.node_list[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)]
-            while next_node != None and next_node.get_value() != None:
-                if self.node_list.index(next_node) in self.losers_bracket_indexes:
-                    next_node.set_value("")
-                else:
-                    next_node.set_value(None)
-                if math.floor(self.node_list.index(next_node) / 2) + int((self.num_nodes + 1) / 2) + 1 < self.num_nodes + 1:
-                    next_node = self.node_list[math.floor(self.node_list.index(next_node) / 2) + int((self.num_nodes + 1) / 2)]
-            next_node = self.node_list[node_index].get_next()
-            while next_node != None and next_node.get_value() != None:
-                if self.node_list.index(next_node) in self.losers_bracket_indexes:
-                    next_node.set_value("")
-                else:
-                    next_node.set_value(None)
-                if math.floor(self.node_list.index(next_node) / 2) + int((self.num_nodes + 1) / 2) + 1 < self.num_nodes + 1:
-                    next_node = self.node_list[math.floor(self.node_list.index(next_node) / 2) + int((self.num_nodes + 1) / 2)]
-
-            for i in range(self.num_nodes - 1, int((self.num_nodes + 1) / 2), -1):
-                if self.node_list[i].get_value() == None or self.node_list[i].get_value() == "":
-                    self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].set_next(self.node_list[i])
-                    self.node_list[((i - int((self.num_nodes + 1) / 2)) * 2) + 1].set_next(self.node_list[i])
-            for val in self.losers_bracket_indexes:
-                tester = False
-                for val2 in self.winners_bracket_indexes:
-                    if self.node_list[val2].get_next() == self.node_list[val]:
-                        tester = True
-                if tester == False:
-                    self.node_list[val].set_value("")
-            for i in range(self.num_nodes - 1, int((self.num_nodes + 1) / 2), -1):
-                if self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].get_value() == None or self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].get_value() == "" or self.node_list[((i - int((self.num_nodes + 1) / 2)) * 2) + 1].get_value() == None or self.node_list[((i - int((self.num_nodes + 1) / 2)) * 2) + 1].get_value() == "":
-                    if i in self.losers_bracket_indexes:
-                        self.node_list[i].set_value("")
+        node_pair = self.find_pair(node_index)
+        self.reset_nodes(node_index)
+        self.node_list[node_index].get_next().set_value(self.node_list[node_index].get_value())
+        # Set winner and if within winners bracket set loser in losers bracket
+        if node_pair in self.winners_bracket_indexes and node_pair != self.num_nodes - 3:
+            if node_index % 2 == 0:
+                loser_index = 0
+                count = 0
+                while loser_index == 0:
+                    if self.node_list[count].get_value() == "":
+                        loser_index = count
                     else:
-                        self.node_list[i].set_value(None)
-                    self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].set_next(self.node_list[i])
-                    self.node_list[((i - int((self.num_nodes + 1) / 2)) * 2) + 1].set_next(self.node_list[i])
-
-            self.node_list[node_index].set_next(self.node_list[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)])
-            self.node_list[node_index].get_next().set_value(self.node_list[node_index].get_value())
-            if node_pair in self.winners_bracket_indexes and node_pair != self.num_nodes - 3:
-                if node_index % 2 == 0:
-                    loser_index = 0
-                    count = 0
-                    while loser_index == 0:
-                        if self.node_list[count].get_value() == "":
-                            loser_index = count
-                        else:
-                            count += 1
-                else:
-                    loser_index = 0
-                    count = 0
-                    while loser_index == 0:
-                        if self.node_list[count].get_value() == "":
-                            loser_index = count
-                        else:
-                            count += 1
-                self.node_list[node_pair].set_next(self.node_list[loser_index])
-                self.node_list[loser_index].set_value(self.node_list[node_pair].get_value())
-            if node_index == self.num_nodes - 7 and node_index in self.winners_bracket_indexes and self.find_pair(node_index) not in self.winners_bracket_indexes:
-                self.node_list[node_index].get_next().get_next().set_value(self.node_list[node_index].get_value())
-                self.node_list[self.num_nodes - 2].set_value("X")
-
-
-
+                        count += 1
+            else:
+                loser_index = 0
+                count = 0
+                while loser_index == 0:
+                    if self.node_list[count].get_value() == "":
+                        loser_index = count
+                    else:
+                        count += 1
+            self.node_list[node_pair].set_next(self.node_list[loser_index])
+            self.node_list[loser_index].set_value(self.node_list[node_pair].get_value())
+        # Accounts for Finals logic when winning
+        if node_index == self.num_nodes - 7 and node_index in self.winners_bracket_indexes and self.find_pair(node_index) not in self.winners_bracket_indexes:
+            self.node_list[node_index].get_next().get_next().set_value(self.node_list[node_index].get_value())
+            self.node_list[self.num_nodes - 2].set_value("X")
 
     def match_undo(self, node_index):
-        no_pair = False
-        if self.node_list[node_index].get_value() == "X" or self.node_list[self.find_pair(node_index)].get_value() == "X":
-            no_pair = True
-        if no_pair == False:
-            self.node_list[node_index].set_next(self.node_list[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)])
-            next_node = self.node_list[math.floor(node_index / 2) + int((self.num_nodes + 1) / 2)]
-            while next_node != None and next_node.get_value() != None:
-                if self.node_list.index(next_node) in self.losers_bracket_indexes:
-                    next_node.set_value("")
-                else:
-                    next_node.set_value(None)
-                if math.floor(self.node_list.index(next_node) / 2) + int((self.num_nodes + 1) / 2) + 1 < self.num_nodes + 1:
-                    next_node = self.node_list[math.floor(self.node_list.index(next_node) / 2) + int((self.num_nodes + 1) / 2)]
-            next_node = self.node_list[self.find_pair(node_index)].get_next()
-            while next_node != None and next_node.get_value() != None:
-                if self.node_list.index(next_node) in self.losers_bracket_indexes:
-                    next_node.set_value("")
-                else:
-                    next_node.set_value(None)
-                if math.floor(self.node_list.index(next_node) / 2) + int((self.num_nodes + 1) / 2) + 1 < self.num_nodes + 1:
-                    next_node = self.node_list[math.floor(self.node_list.index(next_node) / 2) + int((self.num_nodes + 1) / 2)]
-
-            for i in range(self.num_nodes - 1, int((self.num_nodes + 1) / 2), -1):
-                if self.node_list[i].get_value() == None or self.node_list[i].get_value() == "":
-                    self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].set_next(self.node_list[i])
-                    self.node_list[((i - int((self.num_nodes + 1) / 2)) * 2) + 1].set_next(self.node_list[i])
-            for val in self.losers_bracket_indexes:
-                tester = False
-                for val2 in self.winners_bracket_indexes:
-                    if self.node_list[val2].get_next() == self.node_list[val]:
-                        tester = True
-                if tester == False:
-                    self.node_list[val].set_value("")
-            for i in range(self.num_nodes - 1, int((self.num_nodes + 1) / 2), -1):
-                if self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].get_value() == None or self.node_list[
-                    (i - int((self.num_nodes + 1) / 2)) * 2].get_value() == "" or self.node_list[
-                    ((i - int((self.num_nodes + 1) / 2)) * 2) + 1].get_value() == None or self.node_list[
-                    ((i - int((self.num_nodes + 1) / 2)) * 2) + 1].get_value() == "":
-                    if i in self.losers_bracket_indexes:
-                        self.node_list[i].set_value("")
-                    else:
-                        self.node_list[i].set_value(None)
-                    self.node_list[(i - int((self.num_nodes + 1) / 2)) * 2].set_next(self.node_list[i])
-                    self.node_list[((i - int((self.num_nodes + 1) / 2)) * 2) + 1].set_next(self.node_list[i])
-
-
+        self.reset_nodes(node_index)
 
     def set_level_list(self):
         self.level_list, level = [], []
