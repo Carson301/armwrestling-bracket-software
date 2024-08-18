@@ -24,10 +24,8 @@ class Tournament:
 
         global bracket
 
-        bracket = SingleBracket.SingleBracket(["Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
-                                               "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
-                                               "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
-                                               "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette"])  # Create bracket
+        bracket = SingleBracket.SingleBracket(["levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette"])  # Create bracket
+
         #bracket = DoubleBracket.DoubleBracket(["Collin", "Carson", "Gabe", "Bill"])  # Create bracket
         bracket.create_bracket()
         bracket.fill_bracket()
@@ -49,22 +47,24 @@ class Tournament:
         self.title_label = tk.Label(self.root, text="Arm Wrestling Tournament", font=('Impact', 10), fg="white") # Gives another title for the window, but inside the window
         self.title_label.pack(padx=1, pady=1)
 
-        frame = tk.Frame(self.root)
-        frame.pack(fill='both', expand=1)
+        self.canvas = tk.Canvas(self.root, highlightthickness=0, bg="Azure")
 
-        canvas = tk.Canvas(frame)
-        canvas.pack(side='left', fill='both', expand=1)
-        scrollbar = tk.Scrollbar(frame, orient="vertical", command=canvas.yview)
-        scrollbar.pack(side='right', fill='y')
-        scrollbar.configure(bg="Azure", highlightthickness=0)
-        canvas.configure(yscrollcommand=scrollbar.set, bg="Azure", highlightthickness=0)
-        canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        # Create scrollbars
+        self.xscrollbar = tk.Scrollbar(self.root, orient="horizontal", command=self.canvas.xview)
+        self.yscrollbar = tk.Scrollbar(self.root, orient="vertical", command=self.canvas.yview)
+        self.yscrollbar.pack(side="right", fill="y")
+        self.xscrollbar.pack(side="bottom", fill="x")
+        self.canvas.pack(side="top", fill="both", expand=True)
 
-        self.entries_frame = tk.Frame(canvas)
-        self.entries_frame.pack(fill='x', expand=True)  # Packs entries frame so objects fill the x axis
+        # Attach canvas to scrollbars
+        self.canvas.configure(xscrollcommand=self.xscrollbar.set)
+        self.canvas.configure(yscrollcommand=self.yscrollbar.set)
 
-        self.entries_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-        canvas.create_window((0, 0), window=self.entries_frame, anchor="nw")
+        # Create frame inside canvas
+        self.entries_frame = tk.Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.entries_frame, anchor="nw")
+        self.entries_frame.bind('<Configure>', self.set_scrollregion)
+
 
         self.entries_frame.configure(bg="Azure")
         self.root.configure(bg="SpringGreen4")
@@ -81,6 +81,9 @@ class Tournament:
     def on_closing(self):
         self.root.destroy()  # End when closed
 
+    def set_scrollregion(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox('all'))
+
     def draw_bracket(self):
         level_counter1 = 0
         level_counter2 = bracket.get_num_levels() - 1
@@ -89,36 +92,29 @@ class Tournament:
         entry_multiplier = 2
         if isinstance(bracket, SingleBracket.SingleBracket):
             for i in range(bracket.get_num_levels()):  # Create grid layout to hold buttons and labels for bracket
-                self.entries_frame.columnconfigure(i, minsize=125, weight=0)
+                self.entries_frame.columnconfigure(i, minsize=150, weight=0)
 
             for i in range(bracket.get_num_nodes() + 16):
                 self.entries_frame.rowconfigure(i, minsize=20, weight=0)
-            middle = 1
+            middles = [12, 36, 87, 187, 387, 787]
             draw_line = False
-            switcher = False
-            count = 1
+            count = 0
 
             for level in bracket.get_level_list():  # Create bracket in tkinter window using buttons and labels
-                if not switcher:
-                    middle = (middle + 5) * 2
-                else:
-                    middle = ((middle + 5) * 2) + count
-                    count = count * 2
-                switcher = not switcher
+
                 for entry in level:
                     if 1 != -1:
-                        self.buttons.append(tk.Button(self.entries_frame, background="springgreen3", activebackground="springgreen4", fg="white", text=entry.get_value(), font=('Impact', 7),
+                        self.buttons.append(tk.Button(self.entries_frame, background="springgreen3", activebackground="springgreen4", fg="white", text=entry.get_value(), font=('Sans-Serif 8 bold'),
                                                       command=lambda node_counter1=node_counter: self.match_result(
                                                           node_counter1)))
                         self.buttons[len(self.buttons) - 1].grid(row=entry_counter, column=level_counter1,
-                                                                 sticky=tk.W + tk.E, pady=0, padx=0)
+                                                                 sticky=tk.W + tk.E, pady=0, padx=5)
                         if draw_line and entry.get_value() != -1 and bracket.find_index(entry) != bracket.get_num_nodes() - 1:
-                            self.lines.append(tk.Canvas(self.entries_frame, width=125, height=20 * (entry_multiplier - 1), bg="Azure"))
+                            self.lines.append(tk.Canvas(self.entries_frame, width=150, height=20 * (entry_multiplier - 1), bg="Azure", highlightthickness=0))
                             self.lines[len(self.lines) - 1].grid(row=entry_counter - entry_multiplier + 1, rowspan=entry_multiplier - 1, sticky=tk.N+tk.S, column=level_counter1)
                             print(20 * entry_multiplier, 10 * entry_multiplier)
-                            self.lines[len(self.lines) - 1].create_line(115, 0, 115, 20 * (entry_multiplier + 10), width=5)
-                            print(middle)
-                            self.lines[len(self.lines) - 1].create_line(115, middle, 125, middle, width=5) # 12 35 80 173 357 / 2 - 5
+                            self.lines[len(self.lines) - 1].create_line(125, 0, 125, middles[count] * 3, width=5)
+                            self.lines[len(self.lines) - 1].create_line(125, middles[count], 150, middles[count], width=5) # 12 35 80 173 357 / 2 - 5
                             #                                                                        24 70
                         draw_line = not draw_line
                     entry_counter += entry_multiplier
@@ -126,6 +122,7 @@ class Tournament:
                 entry_counter = 1 + entry_multiplier
                 entry_multiplier *= 2
                 level_counter1 += 1
+                count += 1
         entry_counter = 0
         if isinstance(bracket, DoubleBracket.DoubleBracket):
             entry_counter = 6
