@@ -32,16 +32,13 @@ class Tournament:
                                                "levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
                                                "levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette"])  # Create bracket
 
-        # bracket = DoubleBracket.DoubleBracket(["Collin King", "Carson King", "Bill Sinks", "Garrett Tupper",
-        #                                        "Collin King", "Carson King", "Bill Sinks", "Garrett Tupper",
-        #                                        "Collin King", "Carson King", "Bill Sinks", "Garrett Tupper",
-        #                                        "Collin King", "Carson King", "Bill Sinks", "Garrett Tupper",
-        #                                        "Collin King", "Carson King", "Bill Sinks", "Garrett Tupper",
-        #                                        "Collin King", "Carson King", "Bill Sinks", "Garrett Tupper",
-        #                                        "Collin King", "Carson King", "Bill Sinks", "Garrett Tupper",
-        #                                        "Collin King", "Carson King", "Bill Sinks", "Garrett Tupper",
-        #                                        "Collin King", "Carson King", "Bill Sinks", "Garrett Tupper",
-        #                                        "Collin King", "Carson King", "Bill Sinks", "Garrett Tupper"])  # Create bracket
+        # bracket = DoubleBracket.DoubleBracket(["levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
+        #                                         "levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
+        #                                         "levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
+        #                                         "levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
+        #                                         "levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
+        #                                         "levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette",
+        #                                         "levan saginashvili99", "Jerry Cadorette", "Jerry Cadorette", "Jerry Cadorette"])  # Create bracket
         bracket.create_bracket()
         bracket.fill_bracket()
         bracket.account_for_bys()
@@ -109,8 +106,8 @@ class Tournament:
             for i in range(bracket.get_num_levels()):  # Create grid layout to hold buttons and labels for bracket
                 self.entries_frame.columnconfigure(i, minsize=150, weight=0)
 
-            for i in range(int(bracket.get_num_nodes() / 2)):
-                self.entries_frame.rowconfigure(i, minsize=20, weight=0)
+            for i in range(int(bracket.get_num_nodes() / 2) + 32):
+                self.entries_frame.rowconfigure(i, minsize=25, weight=0)
             middles = [12, 36, 87, 187, 387, 787]
             draw_line = False
             count = 0
@@ -125,12 +122,10 @@ class Tournament:
                         self.buttons[len(self.buttons) - 1].grid(row=entry_counter, column=level_counter1,
                                                                  sticky=tk.W + tk.E, pady=0, padx=5)
                         if draw_line and entry.get_value() != -1 and bracket.find_index(entry) != bracket.get_num_nodes() - 1:
-                            self.lines.append(tk.Canvas(self.entries_frame, width=150, height=20 * (entry_multiplier - 1), bg="Azure", highlightthickness=0))
-                            self.lines[len(self.lines) - 1].grid(row=entry_counter - entry_multiplier + 1, rowspan=entry_multiplier - 1, sticky=tk.N+tk.S, column=level_counter1)
-                            print(20 * entry_multiplier, 10 * entry_multiplier)
-                            self.lines[len(self.lines) - 1].create_line(125, 0, 125, middles[count] * 3, width=5)
-                            self.lines[len(self.lines) - 1].create_line(125, middles[count], 150, middles[count], width=5) # 12 35 80 173 357 / 2 - 5
-                            #                                                                        24 70
+                            self.lines.append(tk.Canvas(self.entries_frame, highlightthickness=0, width=150, height=int(self.buttons[0].winfo_reqheight()) * (entry_multiplier - 1), bg="Azure"))
+                            self.lines[len(self.lines) - 1].grid(row=entry_counter - entry_multiplier + 1, rowspan=entry_multiplier - 1, column=level_counter1)
+                            self.lines[len(self.lines) - 1].create_line(125, 0, 125, int(self.buttons[0].winfo_reqheight()) * (entry_multiplier - 1), width=5)
+                            self.lines[len(self.lines) - 1].create_line(125, self.lines[len(self.lines) - 1].winfo_reqheight() // 2, 150, self.lines[len(self.lines) - 1].winfo_reqheight() // 2, width=5) # 12 35 80 173 357 / 2 - 5
                         draw_line = not draw_line
                     entry_counter += entry_multiplier
                     node_counter += 1
@@ -145,7 +140,7 @@ class Tournament:
                 self.entries_frame.columnconfigure(i, minsize=150, weight=0)
 
             for i in range(int(bracket.get_num_nodes() / 2) + 5):
-                self.entries_frame.rowconfigure(i, minsize=20, weight=0)
+                self.entries_frame.rowconfigure(i, minsize=25, weight=0)
             middles = [12, 33, 78, 168, 348, 718]
             draw_line = False
             count = 0
@@ -160,23 +155,28 @@ class Tournament:
                 for j in range(len(level)):
                     if level[j].get_value() != -1:
                         if j < int(len(level) / 4):
-                            self.buttons.append(tk.Button(self.entries_frame, background="springgreen3", activebackground="springgreen4", fg="white", text=level[j].get_value(), font=('Serif-Sans 8 bold'),
-                                                          command=lambda node_counter1=node_counter: self.match_result(
+                            self.buttons.append(tk.Button(self.entries_frame, background="springgreen3",
+                                                          activebackground="springgreen4", fg="white",
+                                                          text=level[j].get_value(), font=('Sans-Serif 8 bold'),
+                                                          command=lambda
+                                                              node_counter1=node_counter: self.match_result(
                                                               node_counter1)))
                             self.buttons[len(self.buttons) - 1].grid(row=entry_counter, column=level_counter1,
-                                                                     sticky=tk.W + tk.E, padx=5, pady=0)
+                                                                     sticky=tk.W + tk.E, pady=0, padx=5)
                             if draw_line and level[j].get_value() != -1 and bracket.find_index(
-                                    level[j]) < bracket.get_num_nodes() - 5:
-                                self.lines.append(
-                                    tk.Canvas(self.entries_frame, width=150, height=20 * (entry_multiplier - 1),
-                                              bg="Azure", highlightthickness=0))
+                                    level[j]) != bracket.get_num_nodes() - 1:
+                                self.lines.append(tk.Canvas(self.entries_frame, highlightthickness=0, width=150,
+                                                            height=int(self.buttons[0].winfo_reqheight()) * (
+                                                                        entry_multiplier - 1), bg="Azure"))
                                 self.lines[len(self.lines) - 1].grid(row=entry_counter - entry_multiplier + 1,
-                                                                     rowspan=entry_multiplier - 1, sticky=tk.N + tk.S,
+                                                                     rowspan=entry_multiplier - 1,
                                                                      column=level_counter1)
-                                print(20 * entry_multiplier, 10 * entry_multiplier)
-                                self.lines[len(self.lines) - 1].create_line(125, 0, 125, middles[count] * 3, width=5)
-                                self.lines[len(self.lines) - 1].create_line(125, middles[count], 150, middles[count],
-                                                                            width=5)
+                                self.lines[len(self.lines) - 1].create_line(125, 0, 125, int(
+                                    self.buttons[0].winfo_reqheight()) * (entry_multiplier - 1), width=5)
+                                self.lines[len(self.lines) - 1].create_line(125, self.lines[
+                                    len(self.lines) - 1].winfo_reqheight() // 2, 150, self.lines[
+                                                                                len(self.lines) - 1].winfo_reqheight() // 2,
+                                                                            width=5)  # 12 35 80 173 357 / 2 - 5
                             draw_line = not draw_line
                         else:
                             self.buttons.append(
@@ -189,14 +189,17 @@ class Tournament:
                             if draw_line and level[j].get_value() != -1 and bracket.find_index(
                                     level[j]) < bracket.get_num_nodes() - 6:
                                 self.lines.append(
-                                    tk.Canvas(self.entries_frame, width=150, height=20 * (entry_multiplier2 - 1),
+                                    tk.Canvas(self.entries_frame, width=150, height=int(self.buttons[0].winfo_reqheight()) * (
+                                                                        entry_multiplier2 - 1),
                                               bg="Azure", highlightthickness=0))
                                 self.lines[len(self.lines) - 1].grid(row=entry_counter2 - entry_multiplier2 + 1,
-                                                                     rowspan=entry_multiplier2 - 1, sticky=tk.N + tk.S,
+                                                                     rowspan=entry_multiplier2 - 1,
                                                                      column=level_counter2)
-                                print(20 * entry_multiplier, 10 * entry_multiplier)
-                                self.lines[len(self.lines) - 1].create_line(25, 0, 25, middles[count] * 3, width=5)
-                                self.lines[len(self.lines) - 1].create_line(25, middles[count], 0, middles[count],
+                                self.lines[len(self.lines) - 1].create_line(25, 0, 25, int(
+                                    self.lines[len(self.lines) - 1].winfo_reqheight()), width=5)
+                                self.lines[len(self.lines) - 1].create_line(25, int(
+                                    self.lines[len(self.lines) - 1].winfo_reqheight()) // 2, 0, int(
+                                    self.lines[len(self.lines) - 1].winfo_reqheight()) // 2,
                                                                             width=5)
                             draw_line = not draw_line
                     if j < int(len(level) / 4):
