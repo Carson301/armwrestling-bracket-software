@@ -5,11 +5,20 @@
 import tkinter as tk
 import SingleBracket
 import DoubleBracket
+import Tournament
 
+pressed = True
+check_buttons = []
+classes = ["0-154 R    ", "0-154 L    ", "155-176 R", "155-176 L", "177-198 R", "177-198 L", "199-220 R", "199-220 L", "221-240 R", "221-240 L", "241+ R     ", "241+ L     "]
+brackets = []
+buttons = []
+lines = []
+button_num = 0
+menu_string = "main"
+root = tk.Tk()
 
 def main():
     global root
-    root = tk.Tk()
     window_width = "1000"
     window_height = "500"
     root.geometry(window_width + "x" + window_height)  # Sets dimensions of window
@@ -18,6 +27,22 @@ def main():
     title_label = tk.Label(root, text="Arm Wrestling Tournament", font=('Impact', 10), fg="white")  # Gives another title for the window, but inside the window
     title_label.pack(padx=1, pady=1)
 
+    root.configure(bg="SpringGreen4")
+    title_label.configure(bg="SpringGreen4", pady=5)
+
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)  # Calls on_closing when window is closed
+
+    updates()  # Update window periodically
+
+    root.mainloop()  # Keep window open
+
+def create_tournament():
+    global brackets
+    brackets = Tournament.Tournament()
+
+
+def draw_scrollbar():
     global canvas
 
     canvas = tk.Canvas(root, highlightthickness=0, bg="Azure")
@@ -34,27 +59,15 @@ def main():
     canvas.configure(yscrollcommand=yscrollbar.set)
 
     # Create frame inside canvas
-    entries_frame = tk.Frame(canvas)
-    canvas.create_window((0, 0), window=entries_frame, anchor="nw")
-    entries_frame.bind('<Configure>', set_scrollregion)
+    frame = tk.Frame(canvas)
+    canvas.create_window((0, 0), window=frame, anchor="nw")
+    frame.bind('<Configure>', set_scrollregion)
 
-    entries_frame.configure(bg="Azure")
-    root.configure(bg="SpringGreen4")
-    title_label.configure(bg="SpringGreen4", pady=5)
+    return frame
 
-
-    root.protocol("WM_DELETE_WINDOW", on_closing)  # Calls on_closing when window is closed
-
-    updates()  # Update window periodically
-
-    root.mainloop()  # Keep window open
-
-def match_result():
-    pass
 def draw_bracket_window(bracket, frame):
     global buttons
-    buttons = []
-    lines = []
+    global lines
     level_counter1 = 0
     entry_counter = 2
     node_counter = 0
@@ -72,7 +85,7 @@ def draw_bracket_window(bracket, frame):
             for i in range(len(level)):
                 if level[i].get_value() != -1:
                     # Create a button that represents a node in the bracket, append it to a list that stores buttons
-                    buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[i].get_value(), font=('Sans-Serif 8 bold'), command=lambda node_counter1=node_counter: match_result(node_counter1)))
+                    buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[i].get_value(), font=('Sans-Serif 8 bold'), command=lambda node_counter1=node_counter: match_result(node_counter1, bracket)))
 
                     # Place the button that was just created in the tkinter grid
                     buttons[len(buttons) - 1].grid(row=entry_counter, column=level_counter1, sticky=tk.W + tk.E, pady=0, padx=5)
@@ -118,7 +131,7 @@ def draw_bracket_window(bracket, frame):
                     # Separates the top half of nodes from the bottom, top=winner and loser=bottom
                     if j < int(len(level) / 4):
                         # Create a button that represents a node in the bracket, append it to a list that stores buttons
-                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[j].get_value(), font=('Sans-Serif 8 bold'), command=lambda node_counter1=node_counter: match_result(node_counter1)))
+                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[j].get_value(), font=('Sans-Serif 8 bold'), command=lambda node_counter1=node_counter: match_result(node_counter1, bracket)))
 
                         # Place the button that was just created in the tkinter grid
                         buttons[len(buttons) - 1].grid(row=entry_counter, column=level_counter1, sticky=tk.W + tk.E, pady=0, padx=5)
@@ -136,7 +149,7 @@ def draw_bracket_window(bracket, frame):
                             lines[len(lines) - 1].create_line(125, lines[len(lines) - 1].winfo_reqheight() // 2, 150, lines[len(lines) - 1].winfo_reqheight() // 2, width=5)
                         count += 1
                     else:
-                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[j].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=node_counter: match_result(node_counter1)))
+                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[j].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=node_counter: match_result(node_counter1, bracket)))
                         buttons[len(buttons) - 1].grid(row=entry_counter2, column=level_counter2, sticky=tk.W + tk.E, padx=5, pady=0)
                         if (i + count) % 2 == 0 and level[j].get_value() != -1 and bracket.find_index(level[j]) < bracket.get_num_nodes() - 6:
                             lines.append(tk.Canvas(frame, width=150, height=int(buttons[0].winfo_reqheight()) * (entry_multiplier2 - 1), bg="Azure", highlightthickness=0))
@@ -157,23 +170,107 @@ def draw_bracket_window(bracket, frame):
             level_counter2 -= 1
 
         # Add the finals buttons
-        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 2][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 3: match_result(node_counter1)))
+        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 2][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 3: match_result(node_counter1, bracket)))
         buttons[len(buttons) - 1].grid(row=4, column=int(bracket.get_num_levels() / 2) - 1, sticky=tk.W + tk.E, padx=5, pady=0)
 
-        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 2][1].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 2: match_result(node_counter1)))
+        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 2][1].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 2: match_result(node_counter1, bracket)))
         buttons[len(buttons) - 1].grid(row=4, column=int(bracket.get_num_levels() / 2) + 1, sticky=tk.W + tk.E, padx=5, pady=0)
 
-        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 1][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 1: match_result(node_counter1)))
+        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 1][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 1: match_result(node_counter1, bracket)))
         buttons[len(buttons) - 1].grid(row=2, column=int(bracket.get_num_levels() / 2), sticky=tk.W + tk.E, padx=5, pady=0)
+
+def switch_screen(string):
+    global menu_string
+    global pressed
+    pressed = True
+    menu_string = string
+
+def draw_brackets_window(frame):
+    global buttons
+    global check_buttons
+    for button in check_buttons:
+        if button.instate(['selected']):
+            buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=button.text, font=('Serif-Sans 8 bold'), command=lambda screen_name="bracket": switch_screen(screen_name)))
+    frame.columnconfigure(0, minsize=10, weight=0)
+    frame.columnconfigure(1, minsize=10, weight=0)
+    frame.columnconfigure(2, minsize=10, weight=0)
+    col_counter = 0
+    row_counter = -1
+    for i in range(len(buttons)):
+        if i % 2 == 0:
+            frame.rowconfigure(i, minsize=20, weight=0)
+            row_counter += 1
+        buttons[i].grid(row=row_counter, column=col_counter, padx=0, pady=0)
+        if col_counter == 0:
+            col_counter += 2
+        else:
+            col_counter = 0
+
+
+def draw_menu_window(frame):
+    global check_buttons
+    frame.columnconfigure(0, minsize=10, weight=0)
+    frame.columnconfigure(1, minsize=10, weight=0)
+    frame.columnconfigure(2, minsize=10, weight=0)
+    col_counter = 0
+    row_counter = -1
+    for i in range(len(classes)):
+        if i % 2 == 0:
+            frame.rowconfigure(i, minsize=20, weight=0)
+            row_counter += 1
+        check_buttons.append(tk.Checkbutton(frame, text=classes[i],
+                variable=tk.IntVar(),
+                onvalue=1,
+                offvalue=0,
+                height=2,
+                width=20))
+        check_buttons[i].grid(row=row_counter, column=col_counter, padx=0, pady=0)
+        if col_counter == 0:
+            col_counter += 2
+        else:
+            col_counter = 0
+
+    frame.rowconfigure(len(classes), minsize=20, weight=0)
+    submit = tk.Button(frame, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
+    submit.grid(row=len(classes), column=1)
 
 
 def updates():
-        root.after(100, updates)  # Update every 250ms
+    global buttons
+    global pressed
+    if pressed:
+        if menu_string == "main":
+            frame = draw_scrollbar()
+            draw_menu_window(frame)
+        if menu_string == "bracket":
+            frame = draw_scrollbar()
+            buttons.clear()  # Reset button list
+            draw_bracket_window(brackets[button_num], frame)
+        if menu_string == "brackets":
+            frame = draw_scrollbar()
+            buttons.clear()  # Reset button list
+            draw_brackets_window(frame)
+        pressed = False
+
+    root.after(100, updates)  # Update every 250ms
+
+
+def match_result(entry, bracket):
+    global pressed
+    global button_num
+    button_num = entry
+    if button_num < bracket.get_num_nodes() - 1 and bracket.check_if_pair(
+            button_num):  # Call bracket functions to produce a result to a match given the button pressed
+        if bracket.get_bracket()[button_num].get_value() == bracket.find_default_next(button_num).get_value():
+            bracket.match_undo(entry)
+        else:
+            bracket.match_winner(entry)
+        pressed = True
 
 def on_closing():
     root.destroy()  # End when closed
 
-def set_scrollregion( event):
+def set_scrollregion(event):
     global canvas
     canvas.configure(scrollregion=canvas.bbox('all'))
 
