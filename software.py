@@ -11,24 +11,25 @@ pressed = True
 check_buttons = []
 classes = ["0-154 R    ", "0-154 L    ", "155-176 R", "155-176 L", "177-198 R", "177-198 L", "199-220 R", "199-220 L", "221-240 R", "221-240 L", "241+ R     ", "241+ L     "]
 brackets = []
+checkers = []
 buttons = []
 lines = []
 button_num = 0
 menu_string = "main"
 root = tk.Tk()
+start_frame = tk.Frame(root, bg="white")
+
 
 def main():
     global root
+    global start_frame
     window_width = "1000"
     window_height = "500"
     root.geometry(window_width + "x" + window_height)  # Sets dimensions of window
     root.title("Arm Wrestling Tournament")  # Gives the window a title
-
-    title_label = tk.Label(root, text="Arm Wrestling Tournament", font=('Impact', 10), fg="white")  # Gives another title for the window, but inside the window
+    start_frame.pack(fill="both", expand=True)
+    title_label = tk.Label(start_frame, text="Arm Wrestling Tournament", font=('Impact', 10), fg="white")  # Gives another title for the window, but inside the window
     title_label.pack(padx=1, pady=1)
-
-    root.configure(bg="SpringGreen4")
-    title_label.configure(bg="SpringGreen4", pady=5)
 
 
     root.protocol("WM_DELETE_WINDOW", on_closing)  # Calls on_closing when window is closed
@@ -37,6 +38,17 @@ def main():
 
     root.mainloop()  # Keep window open
 
+def reset_start_frame():
+    global start_frame
+    for widgets in start_frame.winfo_children():
+        widgets.destroy()
+    start_frame.pack(fill="both", expand=True)
+    title_label = tk.Label(start_frame, text="Arm Wrestling Tournament", font=('Impact', 10),
+                           fg="white")  # Gives another title for the window, but inside the window
+    title_label.pack(padx=1, pady=1)
+    start_frame.configure(bg="SpringGreen4")
+    title_label.configure(bg="SpringGreen4", pady=5)
+
 def create_tournament():
     global brackets
     brackets = Tournament.Tournament()
@@ -44,12 +56,13 @@ def create_tournament():
 
 def draw_scrollbar():
     global canvas
+    global start_frame
 
-    canvas = tk.Canvas(root, highlightthickness=0, bg="Azure")
+    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure")
 
     # Create scrollbars
-    xscrollbar = tk.Scrollbar(root, orient="horizontal", command=canvas.xview)
-    yscrollbar = tk.Scrollbar(root, orient="vertical", command=canvas.yview)
+    xscrollbar = tk.Scrollbar(start_frame, orient="horizontal", command=canvas.xview)
+    yscrollbar = tk.Scrollbar(start_frame, orient="vertical", command=canvas.yview)
     yscrollbar.pack(side="right", fill="y")
     xscrollbar.pack(side="bottom", fill="x")
     canvas.pack(side="top", fill="both", expand=True)
@@ -188,9 +201,10 @@ def switch_screen(string):
 def draw_brackets_window(frame):
     global buttons
     global check_buttons
-    for button in check_buttons:
-        if button.instate(['selected']):
-            buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=button.text, font=('Serif-Sans 8 bold'), command=lambda screen_name="bracket": switch_screen(screen_name)))
+    global checkers
+    for i in range(len(check_buttons)):
+        if checkers[i][0].get() == 1:
+            buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=checkers[i][1], font=('Serif-Sans 8 bold'), command=lambda screen_name="bracket": switch_screen(screen_name)))
     frame.columnconfigure(0, minsize=10, weight=0)
     frame.columnconfigure(1, minsize=10, weight=0)
     frame.columnconfigure(2, minsize=10, weight=0)
@@ -209,6 +223,7 @@ def draw_brackets_window(frame):
 
 def draw_menu_window(frame):
     global check_buttons
+    global checkers
     frame.columnconfigure(0, minsize=10, weight=0)
     frame.columnconfigure(1, minsize=10, weight=0)
     frame.columnconfigure(2, minsize=10, weight=0)
@@ -218,12 +233,13 @@ def draw_menu_window(frame):
         if i % 2 == 0:
             frame.rowconfigure(i, minsize=20, weight=0)
             row_counter += 1
-        check_buttons.append(tk.Checkbutton(frame, text=classes[i],
-                variable=tk.IntVar(),
+        var = tk.IntVar()
+        check_buttons.append(tk.Checkbutton(frame, text=classes[i], variable=var,
                 onvalue=1,
                 offvalue=0,
                 height=2,
                 width=20))
+        checkers.append([var, classes[i]])
         check_buttons[i].grid(row=row_counter, column=col_counter, padx=0, pady=0)
         if col_counter == 0:
             col_counter += 2
@@ -238,7 +254,9 @@ def draw_menu_window(frame):
 def updates():
     global buttons
     global pressed
+    global start_frame
     if pressed:
+        reset_start_frame()
         if menu_string == "main":
             frame = draw_scrollbar()
             draw_menu_window(frame)
