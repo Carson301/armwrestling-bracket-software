@@ -8,6 +8,7 @@ import Node
 
 
 class DoubleBracket(Bracket):
+    bracket_name = ""
     competitor_list = []
     node_list = []
     level_list = []
@@ -18,6 +19,9 @@ class DoubleBracket(Bracket):
 
     # ================================================================================================================ #
     # Bracket Set-Up Methods
+
+    def get_bracket_name(self):
+        return self.bracket_name
 
     def create_bracket(self):
         # Calculates the number of nodes for a complete bracket given a number of competitors

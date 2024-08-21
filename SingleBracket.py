@@ -12,6 +12,7 @@ import random
 class SingleBracket(Bracket):
 
     competitor_list = []
+    bracket_name = ""
     node_list = []
     level_list = []
     num_competitors = 0
@@ -19,6 +20,9 @@ class SingleBracket(Bracket):
 
     # ================================================================================================================ #
     # Bracket Set-Up Methods
+
+    def get_bracket_name(self):
+        return self.bracket_name
 
     def create_bracket(self):
         # Calculates the number of nodes for a complete bracket given a number of competitors
@@ -133,7 +137,16 @@ class SingleBracket(Bracket):
     # Setters and Getters
 
     def get_num_levels(self):
-        return math.ceil(math.log(self.num_competitors, 2)) + 1
+        if self.num_competitors == 0:
+            return 0
+        else:
+            return math.ceil(math.log(self.num_competitors, 2)) + 1
+
+    def begin_bracket(self):
+        if self.num_competitors != 0:
+            self.create_bracket()
+            self.fill_bracket()
+            self.account_for_bys()
 
     def set_level_list(self):
         self.level_list, level = [], []
@@ -171,7 +184,7 @@ class SingleBracket(Bracket):
         current_node = 0
         node_range = math.ceil(self.num_nodes / 2) - 1
         level_count = math.ceil(self.num_nodes / 2) - 1
-        for node in self.nodes:  # Create a string representation of the graph for review purposes
+        for node in self.node_list:  # Create a string representation of the graph for review purposes
             if current_node <= node_range:
                 nodes_string += str(node.get_value()) + " "
             else:

@@ -9,12 +9,21 @@ import math
 class Bracket(ABC):
 
 
-    def __init__(self, competitor_list):
+    def __init__(self, competitor_list, bracket_name):
         self.competitor_list = competitor_list
         self.num_competitors = len(competitor_list)
+        self.bracket_name = bracket_name
+
+    def add_competitor(self, competitor):
+        self.competitor_list.append(competitor)
+        self.num_competitors = len(self.competitor_list)
 
     @abstractmethod
     def create_bracket(self):
+        ...
+
+    @abstractmethod
+    def get_bracket_name(self):
         ...
 
     @abstractmethod

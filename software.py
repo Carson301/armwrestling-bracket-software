@@ -7,10 +7,11 @@ import SingleBracket
 import DoubleBracket
 import Tournament
 
+title = "Arm Wrestling Tournament"
 pressed = True
 check_buttons = []
 classes = ["0-154 R    ", "0-154 L    ", "155-176 R", "155-176 L", "177-198 R", "177-198 L", "199-220 R", "199-220 L", "221-240 R", "221-240 L", "241+ R     ", "241+ L     "]
-brackets = []
+brackets = Tournament.Tournament()
 checkers = []
 buttons = []
 lines = []
@@ -28,7 +29,7 @@ def main():
     root.geometry(window_width + "x" + window_height)  # Sets dimensions of window
     root.title("Arm Wrestling Tournament")  # Gives the window a title
     start_frame.pack(fill="both", expand=True)
-    title_label = tk.Label(start_frame, text="Arm Wrestling Tournament", font=('Impact', 10), fg="white")  # Gives another title for the window, but inside the window
+    title_label = tk.Label(start_frame, text=title, font=('Impact', 10), fg="white")  # Gives another title for the window, but inside the window
     title_label.pack(padx=1, pady=1)
 
 
@@ -43,7 +44,7 @@ def reset_start_frame():
     for widgets in start_frame.winfo_children():
         widgets.destroy()
     start_frame.pack(fill="both", expand=True)
-    title_label = tk.Label(start_frame, text="Arm Wrestling Tournament", font=('Impact', 10),
+    title_label = tk.Label(start_frame, text=title, font=('Impact', 10),
                            fg="white")  # Gives another title for the window, but inside the window
     title_label.pack(padx=1, pady=1)
     start_frame.configure(bg="SpringGreen4")
@@ -51,8 +52,14 @@ def reset_start_frame():
 
 def create_tournament():
     global brackets
+    global check_buttons
+    global checkers
     brackets = Tournament.Tournament()
-
+    for i in range(len(check_buttons)):
+        if checkers[i][0].get() == 1:
+            bracket = SingleBracket.SingleBracket(["hey"], checkers[i][1])
+            bracket.begin_bracket()
+            brackets.get_tournament().append(bracket)
 
 def draw_scrollbar():
     global canvas
@@ -78,6 +85,12 @@ def draw_scrollbar():
 
     return frame
 
+def add_competitor(bracket1, comp):
+    global pressed
+    bracket1.add_competitor(comp)
+    bracket1.begin_bracket()
+    pressed = True
+
 def draw_bracket_window(bracket, frame):
     global buttons
     global lines
@@ -92,6 +105,11 @@ def draw_bracket_window(bracket, frame):
             if i < bracket.get_num_levels():
                 frame.columnconfigure(i, minsize=150, weight=0)
             frame.rowconfigure(i, minsize=25, weight=0)
+
+        add_comp = tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black",
+                                     text="Add", font=('Sans-Serif 8 bold'),
+                                     command=lambda bracket1 = bracket, comp="Jerry": add_competitor(bracket1, comp))
+        add_comp.grid(row=0, column=0)
 
         for level in levels:  # Create bracket in tkinter window using buttons and labels
 
@@ -192,11 +210,19 @@ def draw_bracket_window(bracket, frame):
         buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 1][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 1: match_result(node_counter1, bracket)))
         buttons[len(buttons) - 1].grid(row=2, column=int(bracket.get_num_levels() / 2), sticky=tk.W + tk.E, padx=5, pady=0)
 
-def switch_screen(string):
+def switch_screen(string, bracket_name=None, button_num1=None):
     global menu_string
+    global button_num
     global pressed
-    pressed = True
+    global title
+    if menu_string == "brackets" and string == "bracket":
+        title = bracket_name
+        button_num = button_num1
+    else:
+        title = "Arm Wrestling Tournament"
+        button_num = 0
     menu_string = string
+    pressed = True
 
 def draw_brackets_window(frame):
     global buttons
@@ -204,7 +230,7 @@ def draw_brackets_window(frame):
     global checkers
     for i in range(len(check_buttons)):
         if checkers[i][0].get() == 1:
-            buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=checkers[i][1], font=('Serif-Sans 8 bold'), command=lambda screen_name="bracket": switch_screen(screen_name)))
+            buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=checkers[i][1], font=('Serif-Sans 8 bold'), command=lambda screen_name="bracket", bracket_name=checkers[i][1], button_num1=len(buttons): switch_screen(screen_name, bracket_name, button_num1)))
     frame.columnconfigure(0, minsize=10, weight=0)
     frame.columnconfigure(1, minsize=10, weight=0)
     frame.columnconfigure(2, minsize=10, weight=0)
@@ -255,6 +281,7 @@ def updates():
     global buttons
     global pressed
     global start_frame
+    global button_num
     if pressed:
         reset_start_frame()
         if menu_string == "main":
@@ -263,8 +290,11 @@ def updates():
         if menu_string == "bracket":
             frame = draw_scrollbar()
             buttons.clear()  # Reset button list
-            draw_bracket_window(brackets[button_num], frame)
+            print(button_num)
+            val = brackets.get_tournament()[button_num]
+            draw_bracket_window(brackets.get_tournament()[button_num], frame)
         if menu_string == "brackets":
+            create_tournament()
             frame = draw_scrollbar()
             buttons.clear()  # Reset button list
             draw_brackets_window(frame)
