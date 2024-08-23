@@ -25,6 +25,7 @@ class SingleBracket(Bracket):
         return self.bracket_name
 
     def create_bracket(self):
+        self.node_list = []
         # Calculates the number of nodes for a complete bracket given a number of competitors
         self.num_nodes = (2 ** (math.ceil(math.log(self.num_competitors, 2)) + 1) - 1)
         # Add empty nodes to node_list
@@ -48,15 +49,19 @@ class SingleBracket(Bracket):
         # Value representing a midpoint to begin adding to within the bracket
         midpoint = int(num_comp_nodes / 2) + 1
         # Set both competitor starts and the initial loser starts to there base values
-        for i in range(self.num_competitors):
-            if i < num_comp_nodes / 2:
-                self.node_list[i * 2].set_value(self.competitor_list[i])
-            else:  # Then fills in competitors beginning at the midpoint and alternating directions per addition
-                if i % 2 == 0:
-                    self.node_list[midpoint + math.ceil(offset_value) * 2].set_value(self.competitor_list[i])
-                else:
-                    self.node_list[midpoint - math.ceil(offset_value) * 2].set_value(self.competitor_list[i])
-                offset_value = offset_value + 0.5
+        if self.num_competitors == 2:
+            self.node_list[0].set_value(self.competitor_list[0])
+            self.node_list[1].set_value(self.competitor_list[1])
+        else:
+            for i in range(self.num_competitors):
+                if i < num_comp_nodes / 2:
+                    self.node_list[i * 2].set_value(self.competitor_list[i])
+                else:  # Then fills in competitors beginning at the midpoint and alternating directions per addition
+                    if i % 2 == 0:
+                        self.node_list[midpoint + math.ceil(offset_value) * 2].set_value(self.competitor_list[i])
+                    else:
+                        self.node_list[midpoint - math.ceil(offset_value) * 2].set_value(self.competitor_list[i])
+                    offset_value = offset_value + 0.5
 
     def account_for_bys(self):
         # Set each nodes next node to what it equals
@@ -79,6 +84,12 @@ class SingleBracket(Bracket):
             if current_node.get_value() != -1 and partner_node.get_value() == -1:
                 partner_node.get_next().set_value(current_node.get_value())
                 current_node.set_value(-1)
+        print("jo")
+        for node in self.node_list:
+            print(node.get_value())
+        print("Shmo")
+
+
 
     # ================================================================================================================ #
     # Bracket Altering Methods

@@ -17,6 +17,7 @@ class Bracket(ABC):
     def add_competitor(self, competitor):
         self.competitor_list.append(competitor)
         self.num_competitors = len(self.competitor_list)
+        print(self.competitor_list, self.num_competitors)
 
     @abstractmethod
     def create_bracket(self):
