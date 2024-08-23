@@ -86,6 +86,10 @@ def draw_scrollbar():
 
     return frame
 
+def set_scrollregion(event):
+    global canvas
+    canvas.configure(scrollregion=canvas.bbox('all'))
+
 def add_competitor(bracket1, comp):
     global pressed
     if comp.get(1.0, "end-1c") != "":
@@ -343,10 +347,6 @@ def match_result(entry, bracket):
 
 def on_closing():
     root.destroy()  # End when closed
-
-def set_scrollregion(event):
-    global canvas
-    canvas.configure(scrollregion=canvas.bbox('all'))
 
 
 
