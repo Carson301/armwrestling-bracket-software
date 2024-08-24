@@ -24,9 +24,11 @@ start_frame = tk.Frame(root, bg="white")
 def main():
     global root
     global start_frame
-    window_width = "1000"
-    window_height = "500"
+    window_width = str(1000)
+    window_height = str(500)
     root.geometry(window_width + "x" + window_height)  # Sets dimensions of window
+    root.state("zoomed")
+    root.resizable(False, False)
     root.title("Arm Wrestling Tournament")  # Gives the window a title
     start_frame.pack(fill="both", expand=True)
     title_label = tk.Label(start_frame, text=title, font=('Impact', 10), fg="white")  # Gives another title for the window, but inside the window
@@ -36,6 +38,7 @@ def main():
     root.protocol("WM_DELETE_WINDOW", on_closing)  # Calls on_closing when window is closed
 
     updates()  # Update window periodically
+
 
     root.mainloop()  # Keep window open
 
@@ -74,13 +77,16 @@ def draw_scrollbar():
     xscrollbar.pack(side="bottom", fill="x")
     canvas.pack(side="top", fill="both", expand=True)
 
+
     # Attach canvas to scrollbars
     canvas.configure(xscrollcommand=xscrollbar.set)
     canvas.configure(yscrollcommand=yscrollbar.set)
 
     # Create frame inside canvas
-    frame = tk.Frame(canvas, bg="Azure")
-    canvas.create_window((0, 0), window=frame, anchor="nw")
+    frame = tk.Frame(canvas, bg="red")
+    x0 = frame.winfo_screenwidth() / 2
+    y0 = frame.winfo_screenheight() / 2
+    canvas.create_window((x0, y0), window=frame, anchor="center")
     frame.bind('<Configure>', set_scrollregion)
 
 
