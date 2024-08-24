@@ -154,7 +154,7 @@ class SingleBracket(Bracket):
             return math.ceil(math.log(self.num_competitors, 2)) + 1
 
     def begin_bracket(self):
-        if self.num_competitors != 0:
+        if self.num_competitors > 1:
             self.create_bracket()
             self.fill_bracket()
             self.account_for_bys()

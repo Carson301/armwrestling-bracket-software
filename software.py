@@ -24,9 +24,6 @@ start_frame = tk.Frame(root, bg="white")
 def main():
     global root
     global start_frame
-    window_width = str(1000)
-    window_height = str(500)
-    root.geometry(window_width + "x" + window_height)  # Sets dimensions of window
     root.state("zoomed")
     root.resizable(False, False)
     root.title("Arm Wrestling Tournament")  # Gives the window a title
@@ -60,7 +57,7 @@ def create_tournament():
     brackets = Tournament.Tournament()
     for i in range(len(check_buttons)):
         if checkers[i][0].get() == 1:
-            bracket = SingleBracket.SingleBracket(["Carson", "Collin"], checkers[i][1])
+            bracket = SingleBracket.SingleBracket([], checkers[i][1])
             bracket.begin_bracket()
             brackets.get_tournament().append(bracket)
 
@@ -68,7 +65,7 @@ def draw_scrollbar():
     global canvas
     global start_frame
 
-    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure")
+    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="salmon")
 
     # Create scrollbars
     xscrollbar = tk.Scrollbar(start_frame, orient="horizontal", command=canvas.xview)
@@ -86,7 +83,7 @@ def draw_scrollbar():
     frame = tk.Frame(canvas, bg="red")
     x0 = frame.winfo_screenwidth() / 2
     y0 = frame.winfo_screenheight() / 2
-    canvas.create_window((x0, y0), window=frame, anchor="center")
+    canvas.create_window((x0, y0), window=frame, anchor="center", width=frame.winfo_screenwidth(), height=frame.winfo_screenheight())
     frame.bind('<Configure>', set_scrollregion)
 
 
@@ -245,7 +242,7 @@ def switch_screen(string, bracket_name=None, button_num2=None):
     global button_num1
     global pressed
     global title
-    if menu_string == "main" and string == "brackets":
+    if menu_string == "pick" and string == "brackets":
         create_tournament()
         title = "Arm Wrestling Tournament"
         button_num = 0
@@ -310,6 +307,13 @@ def draw_menu_window(frame):
     submit = tk.Button(frame, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
     submit.grid(row=len(classes), column=1)
 
+def draw_main_window(frame):
+    global buttons
+    tk.Button(frame, text="Start", command=lambda screen_name="pick": switch_screen(screen_name)).pack(side=tk.TOP)
+    tk.Button(frame, text="Options", command=lambda screen_name="options": switch_screen(screen_name))
+    tk.Button(frame, text="Help", command=lambda screen_name="help": switch_screen(screen_name))
+
+
 
 def updates():
     global buttons
@@ -321,6 +325,9 @@ def updates():
     if pressed:
         reset_start_frame()
         if menu_string == "main":
+            frame = draw_scrollbar()
+            draw_main_window(frame)
+        if menu_string == "pick":
             frame = draw_scrollbar()
             draw_menu_window(frame)
         if menu_string == "bracket":
