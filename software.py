@@ -107,8 +107,9 @@ def set_scrollregion(event):
 
 def add_competitor(bracket1, comp):
     global pressed
-    if comp.get(1.0, "end-1c") != "":
-        bracket1.add_competitor(comp.get(1.0, "end-1c"))
+    print(comp, "here")
+    if comp != "":
+        bracket1.add_competitor(comp)
         bracket1.begin_bracket()
         pressed = True
 
@@ -128,11 +129,11 @@ def draw_bracket_window(bracket, frame):
             if i < bracket.get_num_levels():
                 frame.columnconfigure(i, minsize=150, weight=0)
             frame.rowconfigure(i, minsize=25, weight=0)
-
-        add_input = tk.Text(buttons_frame, height=1, width=15)
+        input_add = tk.StringVar()
+        add_input = tk.Entry(buttons_frame, textvariable=input_add, width=15)
         add_comp = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
                                      text="Add", font=('Sans-Serif 8 bold'),
-                                     command=lambda bracket1 = bracket, comp=add_input: add_competitor(bracket1, comp))
+                                     command=lambda bracket1=bracket, comp=input_add.get(): add_competitor(bracket1, comp))
         add_comp.grid(row=0, column=1)
         add_input.grid(row=0, column=2)
 
