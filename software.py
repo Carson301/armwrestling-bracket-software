@@ -65,7 +65,7 @@ def draw_scrollbar():
     global canvas
     global start_frame
 
-    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="salmon")
+    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure")
 
     # Create scrollbars
     xscrollbar = tk.Scrollbar(start_frame, orient="horizontal", command=canvas.xview)
@@ -80,10 +80,10 @@ def draw_scrollbar():
     canvas.configure(yscrollcommand=yscrollbar.set)
 
     # Create frame inside canvas
-    frame = tk.Frame(canvas, bg="red")
+    frame = tk.Frame(canvas, bg="Azure")
     x0 = frame.winfo_screenwidth() / 2
     y0 = frame.winfo_screenheight() / 2
-    canvas.create_window((x0, y0), window=frame, anchor="center", width=frame.winfo_screenwidth(), height=frame.winfo_screenheight())
+    canvas.create_window((x0, y0), window=frame, anchor="s")
     frame.bind('<Configure>', set_scrollregion)
 
 
@@ -261,21 +261,23 @@ def draw_brackets_window(frame):
     global checkers
     for i in range(len(check_buttons)):
         if checkers[i][0].get() == 1:
-            buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=checkers[i][1], font=('Serif-Sans 8 bold'), command=lambda screen_name="bracket", bracket_name=checkers[i][1], button_num2=len(buttons): switch_screen(screen_name, bracket_name, button_num2)))
-    frame.columnconfigure(0, minsize=10, weight=0)
-    frame.columnconfigure(1, minsize=10, weight=0)
-    frame.columnconfigure(2, minsize=10, weight=0)
+            buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=checkers[i][1], font=('Serif-Sans 20 bold'), command=lambda screen_name="bracket", bracket_name=checkers[i][1], button_num2=len(buttons): switch_screen(screen_name, bracket_name, button_num2)))
+    frame.columnconfigure(0, minsize=100, weight=0)
+    frame.columnconfigure(1, minsize=100, weight=0)
     col_counter = 0
     row_counter = -1
     for i in range(len(buttons)):
         if i % 2 == 0:
-            frame.rowconfigure(i, minsize=20, weight=0)
+            frame.rowconfigure(i, minsize=50, weight=0)
             row_counter += 1
-        buttons[i].grid(row=row_counter, column=col_counter, padx=0, pady=0)
+        buttons[i].grid(row=row_counter, column=col_counter, padx=5, pady=5)
         if col_counter == 0:
-            col_counter += 2
+            col_counter += 1
         else:
             col_counter = 0
+    if len(buttons) == 1:
+        tk.Label(frame, text="154-176 R", font=('Serif-Sans 20 bold'), fg="Azure", bg="Azure").grid(row=0, column=1, padx=10, pady=5)
+
 
 
 def draw_menu_window(frame):
@@ -286,12 +288,13 @@ def draw_menu_window(frame):
     frame.columnconfigure(2, minsize=10, weight=0)
     col_counter = 0
     row_counter = -1
+    frame.configure(bg="springgreen3")
     for i in range(len(classes)):
         if i % 2 == 0:
             frame.rowconfigure(i, minsize=20, weight=0)
             row_counter += 1
         var = tk.IntVar()
-        check_buttons.append(tk.Checkbutton(frame, text=classes[i], variable=var, bg="Azure",
+        check_buttons.append(tk.Checkbutton(frame, bg="springgreen3", text=classes[i], variable=var,
                 onvalue=1,
                 offvalue=0,
                 height=2,
@@ -309,9 +312,9 @@ def draw_menu_window(frame):
 
 def draw_main_window(frame):
     global buttons
-    tk.Button(frame, text="Start", command=lambda screen_name="pick": switch_screen(screen_name)).pack(side=tk.TOP)
-    tk.Button(frame, text="Options", command=lambda screen_name="options": switch_screen(screen_name))
-    tk.Button(frame, text="Help", command=lambda screen_name="help": switch_screen(screen_name))
+    tk.Button(frame, bg='springgreen3', text="Start", font=('Impact', 25), width=25, command=lambda screen_name="pick": switch_screen(screen_name)).grid(row=0, column=0, pady=10)
+    tk.Button(frame, bg='springgreen3', text="Options", font=('Impact', 25), width=25, command=lambda screen_name="options": switch_screen(screen_name)).grid(row=1, column=0, pady=10)
+    tk.Button(frame, bg='springgreen3', text="Help", font=('Impact', 25), width=25, command=lambda screen_name="help": switch_screen(screen_name)).grid(row=2, column=0, pady=10)
 
 
 
