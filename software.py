@@ -19,6 +19,7 @@ button_num = 0
 menu_string = "main"
 root = tk.Tk()
 start_frame = tk.Frame(root, bg="white")
+buttons_frame = tk.Frame(start_frame, bg="red")
 
 
 def main():
@@ -30,6 +31,7 @@ def main():
     start_frame.pack(fill="both", expand=True)
     title_label = tk.Label(start_frame, text=title, font=('Impact', 10), fg="white")  # Gives another title for the window, but inside the window
     title_label.pack(padx=1, pady=1)
+    buttons_frame.pack()
 
 
     root.protocol("WM_DELETE_WINDOW", on_closing)  # Calls on_closing when window is closed
@@ -41,12 +43,15 @@ def main():
 
 def reset_start_frame():
     global start_frame
+    global buttons_frame
     for widgets in start_frame.winfo_children():
         widgets.destroy()
     start_frame.pack(fill="both", expand=True)
     title_label = tk.Label(start_frame, text=title, font=('Impact', 10),
                            fg="white")  # Gives another title for the window, but inside the window
     title_label.pack(padx=1, pady=1)
+    buttons_frame = tk.Frame(start_frame, bg="blue")
+    buttons_frame.pack(fill="both")
     start_frame.configure(bg="SpringGreen4")
     title_label.configure(bg="SpringGreen4", pady=5)
 
@@ -104,6 +109,7 @@ def draw_bracket_window(bracket, frame):
     global buttons
     global lines
     global start_frame
+    global buttons_frame
     level_counter1 = 0
     entry_counter = 2
     node_counter = 0
@@ -116,14 +122,11 @@ def draw_bracket_window(bracket, frame):
                 frame.columnconfigure(i, minsize=150, weight=0)
             frame.rowconfigure(i, minsize=25, weight=0)
 
-
-        button_frame = tk.Frame(start_frame)
-        button_frame.pack(side="top")
-        go_back = tk.Button(button_frame, background="springgreen3", activebackground="springgreen4", fg="black",
+        go_back = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
                                      text="<-", font=('Sans-Serif 8 bold'),
                                      command=lambda menu = "brackets": switch_screen(menu))
-        add_input = tk.Text(button_frame, height=1, width=15)
-        add_comp = tk.Button(button_frame, background="springgreen3", activebackground="springgreen4", fg="black",
+        add_input = tk.Text(buttons_frame, height=1, width=15)
+        add_comp = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
                                      text="Add", font=('Sans-Serif 8 bold'),
                                      command=lambda bracket1 = bracket, comp=add_input: add_competitor(bracket1, comp))
         go_back.grid(row=0, column=0)
