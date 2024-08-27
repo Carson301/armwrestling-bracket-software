@@ -22,6 +22,7 @@ menu_string = "main"
 root = tk.Tk()
 start_frame = tk.Frame(root, bg="white")
 buttons_frame = tk.Frame(start_frame, bg="red")
+frame2 = tk.Frame(start_frame, bg="red")
 
 
 def main():
@@ -47,6 +48,7 @@ def reset_start_frame():
     global start_frame
     global buttons_frame
     global prev_menu_string
+    global frame2
     for widgets in start_frame.winfo_children():
         widgets.destroy()
     start_frame.pack(fill="both", expand=True)
@@ -55,6 +57,9 @@ def reset_start_frame():
     title_label.pack(padx=1, pady=1)
     buttons_frame = tk.Frame(start_frame, bg="blue")
     buttons_frame.pack(fill="both")
+    frame2 = tk.Frame(start_frame, bg="seashell3")
+    if menu_string == "bracket":
+        frame2.pack(fill="y", side="right")
     if menu_string != "main":
         go_back = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
                             text="<---", font=('Sans-Serif 8 bold'),
@@ -140,7 +145,7 @@ def draw_bracket_window(bracket, frame):
     if isinstance(bracket, SingleBracket.SingleBracket):
         # Create rows and columns based on bracket size
         for i in range(int(bracket.get_num_nodes() / 2) + 32):
-            if i < bracket.get_num_levels():
+            if i < bracket.get_num_levels() + 1:
                 frame.columnconfigure(i, minsize=150, weight=0)
             frame.rowconfigure(i, minsize=25, weight=0)
         input_add = tk.StringVar()
@@ -148,13 +153,10 @@ def draw_bracket_window(bracket, frame):
         add_comp = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
                                      text="Add", font=('Sans-Serif 8 bold'),
                                      command=lambda bracket1=bracket, comp=input_add: add_competitor(bracket1, comp))
+
         add_comp.grid(row=0, column=1)
         add_input.grid(row=0, column=2)
 
-        for level in levels:
-            print("__")
-            for entry in level:
-                print(entry.get_value())
 
         for level in levels:  # Create bracket in tkinter window using buttons and labels
 
@@ -188,6 +190,12 @@ def draw_bracket_window(bracket, frame):
             entry_counter = 1 + entry_multiplier
             entry_multiplier *= 2
             level_counter1 += 1
+
+        entries_string = ""
+        for entry in bracket.get_competitor_list():
+            entries_string += entry + "\n"
+        tk.Label(frame2, text="Competitor List     ", font='sans-serif 10', bg="seashell4").grid(row=0, column=0)
+        tk.Label(frame2, text=entries_string, bg="seashell3").grid(row=1, column=0)
     if isinstance(bracket, DoubleBracket.DoubleBracket):
         # Separate level counter for losers bracket
         level_counter2 = bracket.get_num_levels() - 1

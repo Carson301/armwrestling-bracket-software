@@ -147,6 +147,9 @@ class SingleBracket(Bracket):
     # ================================================================================================================ #
     # Setters and Getters
 
+    def get_competitor_list(self):
+        return self.competitor_list
+
     def get_num_levels(self):
         if self.num_competitors == 0:
             return 0
