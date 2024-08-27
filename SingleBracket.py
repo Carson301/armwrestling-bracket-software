@@ -84,10 +84,6 @@ class SingleBracket(Bracket):
             if current_node.get_value() != -1 and partner_node.get_value() == -1:
                 partner_node.get_next().set_value(current_node.get_value())
                 current_node.set_value(-1)
-        print("jo")
-        for node in self.node_list:
-            print(node.get_value())
-        print("Shmo")
 
 
 
