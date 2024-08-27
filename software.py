@@ -6,6 +6,7 @@ import tkinter as tk
 import SingleBracket
 import DoubleBracket
 import Tournament
+from tkinter import messagebox
 
 title = "Arm Wrestling Tournament"
 prev_menu_string = "main"
@@ -107,11 +108,24 @@ def set_scrollregion(event):
 
 def add_competitor(bracket1, comp):
     global pressed
-    print(comp, "here")
-    if comp != "":
-        bracket1.add_competitor(comp)
-        bracket1.begin_bracket()
-        pressed = True
+    print(comp.get(), "here")
+    if comp.get() != "":
+        if len(comp.get()) > 20:
+            messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
+        else:
+            copy = False
+            for i in range(len(bracket1.get_bracket())):
+                if bracket1.get_bracket()[i].get_value() == comp.get():
+                    copy = True
+            if copy:
+                messagebox.showerror('Error', 'Error: Competitor is already in bracket')
+            else:
+                bracket1.add_competitor(comp.get())
+                bracket1.begin_bracket()
+                pressed = True
+    else:
+        messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
+
 
 def draw_bracket_window(bracket, frame):
     global buttons
@@ -133,7 +147,7 @@ def draw_bracket_window(bracket, frame):
         add_input = tk.Entry(buttons_frame, textvariable=input_add, width=15)
         add_comp = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
                                      text="Add", font=('Sans-Serif 8 bold'),
-                                     command=lambda bracket1=bracket, comp=input_add.get(): add_competitor(bracket1, comp))
+                                     command=lambda bracket1=bracket, comp=input_add: add_competitor(bracket1, comp))
         add_comp.grid(row=0, column=1)
         add_input.grid(row=0, column=2)
 
