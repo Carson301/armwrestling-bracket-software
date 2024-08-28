@@ -18,6 +18,10 @@ class Bracket(ABC):
         self.competitor_list.append(competitor)
         self.num_competitors = len(self.competitor_list)
 
+    def del_competitor(self, competitor):
+        self.competitor_list.remove(competitor)
+        self.num_competitors = len(self.competitor_list)
+
     @abstractmethod
     def create_bracket(self):
         ...

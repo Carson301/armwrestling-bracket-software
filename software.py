@@ -111,6 +111,11 @@ def set_scrollregion(event):
     global canvas
     canvas.configure(scrollregion=canvas.bbox('all'))
 
+def del_competitor(bracket1, comp):
+    global pressed
+    bracket1.del_competitor(comp)
+    bracket1.begin_bracket()
+    pressed = True
 def add_competitor(bracket1, comp):
     global pressed
     print(comp.get(), "here")
@@ -193,11 +198,12 @@ def draw_bracket_window(bracket, frame):
                 entry_counter = 1 + entry_multiplier
                 entry_multiplier *= 2
                 level_counter1 += 1
-        entries_string = ""
-        for entry in bracket.get_competitor_list():
-            entries_string += entry + "\n"
+        count = 2
         tk.Label(frame2, text="Competitor List", font='sans-serif 10', bg="seashell4").grid(row=1, column=0, columnspan=2, sticky='ew')
-        tk.Label(frame2, text=entries_string, bg="seashell3").grid(row=2, column=0, columnspan=2)
+        for entry in bracket.get_competitor_list():
+            tk.Label(frame2, text=entry, bg="seashell3").grid(row=count, column=0)
+            tk.Button(frame2, text="X", bg="red", font='Arial 5', command=lambda comp1=entry: del_competitor(bracket, comp1)).grid(row=count, column=1)
+            count += 1
     if isinstance(bracket, DoubleBracket.DoubleBracket):
         # Separate level counter for losers bracket
         level_counter2 = bracket.get_num_levels() - 1
