@@ -55,7 +55,7 @@ def reset_start_frame():
     title_label = tk.Label(start_frame, text=title, font=('Impact', 10),
                            fg="white")  # Gives another title for the window, but inside the window
     title_label.pack(padx=1, pady=1)
-    buttons_frame = tk.Frame(start_frame, bg="blue")
+    buttons_frame = tk.Frame(start_frame, bg="Azure")
     buttons_frame.pack(fill="both")
     frame2 = tk.Frame(start_frame, bg="seashell3")
     if menu_string == "bracket":
@@ -84,7 +84,7 @@ def draw_scrollbar():
     global start_frame
     global menu_string
 
-    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="navy")
+    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure")
 
     # Create scrollbars
     xscrollbar = tk.Scrollbar(start_frame, orient="horizontal", command=canvas.xview)
@@ -99,15 +99,15 @@ def draw_scrollbar():
     canvas.configure(yscrollcommand=yscrollbar.set)
 
     # Create frame inside canvas
-    frame = tk.Frame(canvas, bg="salmon")
+    frame = tk.Frame(canvas, bg="Azure")
     x_var = frame.winfo_screenwidth() / 2
     y_var = frame.winfo_screenheight() / 2
     if menu_string == "main" or menu_string == "pick":
         y_var = (frame.winfo_screenheight() / 2) - 50
     if menu_string == "brackets":
-        y_var = 50
+        y_var = 0
     if menu_string == "bracket":
-        y_var = 50
+        y_var = 0
         x_var = 0
     canvas.create_window((x_var, y_var), window=frame, anchor="center")
     frame.bind('<Configure>', set_scrollregion)
@@ -173,7 +173,7 @@ def draw_bracket_window(bracket, frame):
         add_input.grid(row=0, column=0, pady=5)
 
         if bracket.get_num_competitors() < 2:
-            tk.Label(frame, text='Requires at least 2 competitors').grid(row=0, column=0)
+            tk.Label(frame, text='Attention! Bracket Requires at least 2 competitors before it is drawn.', font='20', bg='yellow').grid(row=2, column=0, sticky="e")
         else:
             for level in levels:  # Create bracket in tkinter window using buttons and labels
 
