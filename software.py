@@ -116,6 +116,7 @@ def del_competitor(bracket1, comp):
     bracket1.del_competitor(comp)
     bracket1.begin_bracket()
     pressed = True
+
 def add_competitor(bracket1, comp):
     global pressed
     print(comp.get(), "here")
