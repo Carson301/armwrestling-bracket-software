@@ -82,8 +82,9 @@ def create_tournament():
 def draw_scrollbar():
     global canvas
     global start_frame
+    global menu_string
 
-    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure")
+    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="navy")
 
     # Create scrollbars
     xscrollbar = tk.Scrollbar(start_frame, orient="horizontal", command=canvas.xview)
@@ -98,10 +99,17 @@ def draw_scrollbar():
     canvas.configure(yscrollcommand=yscrollbar.set)
 
     # Create frame inside canvas
-    frame = tk.Frame(canvas, bg="Azure")
-    x0 = frame.winfo_screenwidth() / 2
-    y0 = frame.winfo_screenheight() / 2
-    canvas.create_window((x0, y0), window=frame, anchor="center")
+    frame = tk.Frame(canvas, bg="salmon")
+    x_var = frame.winfo_screenwidth() / 2
+    y_var = frame.winfo_screenheight() / 2
+    if menu_string == "main" or menu_string == "pick":
+        y_var = (frame.winfo_screenheight() / 2) - 50
+    if menu_string == "brackets":
+        y_var = 50
+    if menu_string == "bracket":
+        y_var = 50
+        x_var = 0
+    canvas.create_window((x_var, y_var), window=frame, anchor="center")
     frame.bind('<Configure>', set_scrollregion)
 
 
@@ -151,7 +159,7 @@ def draw_bracket_window(bracket, frame):
     if isinstance(bracket, SingleBracket.SingleBracket):
         # Create rows and columns based on bracket size
         if bracket.get_num_competitors() > 1:
-            for i in range(int(bracket.get_num_nodes() / 2) + 32):
+            for i in range(int(bracket.get_num_nodes())):
                 if i < bracket.get_num_levels() + 1:
                     frame.columnconfigure(i, minsize=150, weight=0)
                 frame.rowconfigure(i, minsize=25, weight=0)
