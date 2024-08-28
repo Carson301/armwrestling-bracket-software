@@ -60,9 +60,10 @@ def reset_start_frame():
     frame2 = tk.Frame(start_frame, bg="seashell3")
     if menu_string == "bracket":
         frame2.pack(fill="y", side="right")
+        frame2.configure(borderwidth=3, relief="solid")
     if menu_string != "main":
         go_back = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
-                            text="<---", font=('Sans-Serif 8 bold'),
+                            text="Back", font=('Sans-Serif 8 bold'),
                             command=lambda menu=prev_menu_string: switch_screen(menu))
         go_back.grid(row=0, column=0)
     start_frame.configure(bg="SpringGreen4")
@@ -84,7 +85,7 @@ def draw_scrollbar():
     global start_frame
     global menu_string
 
-    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure")
+    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure", borderwidth=3, relief="solid")
 
     # Create scrollbars
     xscrollbar = tk.Scrollbar(start_frame, orient="horizontal", command=canvas.xview)
@@ -104,6 +105,8 @@ def draw_scrollbar():
     y_var = frame.winfo_screenheight() / 2
     if menu_string == "main" or menu_string == "pick":
         y_var = (frame.winfo_screenheight() / 2) - 50
+    if menu_string == "pick":
+        frame.configure(borderwidth=3, relief="solid")
     if menu_string == "brackets":
         y_var = 0
     if menu_string == "bracket":
