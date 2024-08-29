@@ -154,6 +154,7 @@ def add_competitor(bracket1, comp):
             messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
     else:
         bracket1.add_competitor(comp.get())
+        bracket1.begin_bracket()
         pressed = True
 
 def draw_bracket_window(bracket, frame):
@@ -378,25 +379,28 @@ def draw_brackets_window(frame):
     input_add = tk.StringVar()
     add_input = tk.Entry(frame2, textvariable=input_add, width=15)
     add_input.grid(row=0, column=0, pady=5)
-    col_counter = 0
-    row_counter = 0
-    frame2.configure(bg="springgreen3")
-    for i in range(len(classes)):
-        if i % 2 == 0:
-            frame2.rowconfigure(i, minsize=20, weight=0)
-            row_counter += 1
+    for i in range(len(buttons)):
         var = tk.IntVar()
-        check_buttons2.append(tk.Checkbutton(frame2, bg="springgreen3", text=classes[i], variable=var,
-                                            onvalue=1,
-                                            offvalue=0,
-                                            height=2,
-                                            width=20))
-        checkers2.append([var, classes[i]])
-        check_buttons2[i].grid(row=row_counter, column=col_counter, padx=0, pady=0)
-        if col_counter == 0:
-            col_counter += 2
+        check_buttons2.append(tk.Checkbutton(frame2, background="springgreen3", activebackground="springgreen4", text=button_names[i], variable=var,
+                onvalue=1,
+                offvalue=0,
+                height=2,
+                width=20))
+    frame2.configure(bg="springgreen3")
+    row_counter = 0
+    prev_button = "NA"
+    for i in range(len(check_buttons2)):
+        if button_names[i][:-1] == prev_button[:-1]:
+            col_counter = 1
         else:
-            col_counter = 0
+            frame2.rowconfigure(i, minsize=50, weight=0)
+            row_counter += 1
+            if "L" in button_names[i]:
+                col_counter = 1
+            else:
+                col_counter = 0
+        check_buttons2[i].grid(row=row_counter, column=col_counter, padx=5, pady=5)
+        prev_button = button_names[i]
 
     frame2.rowconfigure(len(classes), minsize=20, weight=0)
     submit = tk.Button(frame2, text="Submit", command=lambda name=input_add, checks=checkers2, button_nums1 = button_nums: add_to_brackets(name, checkers, button_nums1))
