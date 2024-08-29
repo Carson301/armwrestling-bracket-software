@@ -135,27 +135,23 @@ def del_competitor(bracket1, comp):
 
 def add_competitor(bracket1, comp):
     global pressed
-    if menu_string == "bracket":
-        if comp.get() != "":
-            if len(comp.get()) > 20:
-                messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
-            else:
-                copy = False
-                for i in range(bracket1.num_competitors):
-                    if bracket1.get_competitor_list()[i] == comp.get():
-                        copy = True
-                if copy:
-                    messagebox.showerror('Error', 'Error: Competitor is already in bracket')
-                else:
-                    bracket1.add_competitor(comp.get())
-                    bracket1.begin_bracket()
-                    pressed = True
+    if comp.get() != "":
+        if len(comp.get()) > 20:
+            messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
         else:
-            messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
+            copy = False
+            for i in range(bracket1.num_competitors):
+                if bracket1.get_competitor_list()[i] == comp.get():
+                    copy = True
+            if copy:
+                messagebox.showerror('Error', 'Error: Competitor is already in bracket')
+            else:
+                bracket1.add_competitor(comp.get())
+                bracket1.begin_bracket()
+                pressed = True
     else:
-        bracket1.add_competitor(comp.get())
-        bracket1.begin_bracket()
-        pressed = True
+        messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
+
 
 def draw_bracket_window(bracket, frame):
     global buttons
@@ -331,11 +327,32 @@ def add_to_brackets(name, checks, button_nums1):
     global brackets
     global checkers
     global buttons
-    count = -1
-    for i in range(len(checks)):
-        if checks[i][0].get() == 1:
-            count += 1
-            add_competitor(brackets.get_tournament()[button_nums1[count]], name)
+    global pressed
+    brackets_within = "Error: Competitor is already in the following brackets:\n"
+    if name.get() != "":
+        if len(name.get()) > 20:
+            messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
+        else:
+            copy = False
+            for i in range(len(checks)):
+                if checks[i][0].get() == 1:
+                    for j in range(brackets.get_tournament()[button_nums1[i]].num_competitors):
+                        if brackets.get_tournament()[button_nums1[i]].get_competitor_list()[j] == name.get():
+                            copy = True
+                            brackets_within += brackets.get_tournament()[
+                        button_nums1[i]].get_bracket_name() + "\n"
+            if copy == True:
+                messagebox.showerror('Error', brackets_within)
+            else:
+                for i in range(len(checks)):
+                    if checks[i][0].get() == 1:
+                        brackets.get_tournament()[button_nums1[i]].add_competitor(name.get())
+                        brackets.get_tournament()[button_nums1[i]].begin_bracket()
+                        pressed = True
+    else:
+        messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
+
+
 
 
 
@@ -404,7 +421,7 @@ def draw_brackets_window(frame):
         prev_button = button_names[i]
 
     frame2.rowconfigure(len(classes), minsize=20, weight=0)
-    submit = tk.Button(frame2, text="Submit", command=lambda name=input_add, checks=checkers2, button_nums1 = button_nums: add_to_brackets(name, checkers, button_nums1))
+    submit = tk.Button(frame2, text="Submit", command=lambda name=input_add, checks=checkers2, button_nums1 = button_nums: add_to_brackets(name, checks, button_nums1))
     submit.grid(row=len(classes), column=1)
 
 
