@@ -12,7 +12,7 @@ title = "Arm Wrestling Tournament"
 prev_menu_string = "main"
 pressed = True
 check_buttons = []
-classes = ["0-154 R    ", "0-154 L    ", "155-176 R", "155-176 L", "177-198 R", "177-198 L", "199-220 R", "199-220 L", "221-240 R", "221-240 L", "241+ R     ", "241+ L     "]
+classes = ["0-154 R", "0-154 L", "155-176 R", "155-176 L", "177-198 R", "177-198 L", "199-220 R", "199-220 L", "221-240 R", "221-240 L", "241+ R", "241+ L"]
 brackets = Tournament.Tournament()
 checkers = []
 buttons = []
@@ -136,8 +136,8 @@ def add_competitor(bracket1, comp):
             messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
         else:
             copy = False
-            for i in range(len(bracket1.get_bracket())):
-                if bracket1.get_bracket()[i].get_value() == comp.get():
+            for i in range(bracket1.num_competitors):
+                if bracket1.get_competitor_list()[i] == comp.get():
                     copy = True
             if copy:
                 messagebox.showerror('Error', 'Error: Competitor is already in bracket')
@@ -323,22 +323,28 @@ def draw_brackets_window(frame):
     global buttons
     global check_buttons
     global checkers
+    button_names = []
     for i in range(len(check_buttons)):
         if checkers[i][0].get() == 1:
-            buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=checkers[i][1], font=('Serif-Sans 20 bold'), command=lambda screen_name="bracket", bracket_name=checkers[i][1], button_num2=len(buttons): switch_screen(screen_name, bracket_name, button_num2)))
+            buttons.append(tk.Button(frame, background="springgreen3", width=10, activebackground="springgreen4", fg="white", text=checkers[i][1], font=('Serif-Sans 20 bold'), command=lambda screen_name="bracket", bracket_name=checkers[i][1], button_num2=len(buttons): switch_screen(screen_name, bracket_name, button_num2)))
+            button_names.append(checkers[i][1])
     frame.columnconfigure(0, minsize=100, weight=0)
     frame.columnconfigure(1, minsize=100, weight=0)
     col_counter = 0
     row_counter = -1
+    prev_button = "NA"
     for i in range(len(buttons)):
-        if i % 2 == 0:
+        if button_names[i][:-1] == prev_button[:-1]:
+            col_counter = 1
+        else:
             frame.rowconfigure(i, minsize=50, weight=0)
             row_counter += 1
+            if "L" in button_names[i]:
+                col_counter = 1
+            else:
+                col_counter = 0
         buttons[i].grid(row=row_counter, column=col_counter, padx=5, pady=5)
-        if col_counter == 0:
-            col_counter += 1
-        else:
-            col_counter = 0
+        prev_button = button_names[i]
     if len(buttons) == 1:
         tk.Label(frame, text="154-176 R", font=('Serif-Sans 20 bold'), fg="Azure", bg="Azure").grid(row=0, column=1, padx=10, pady=5)
 
