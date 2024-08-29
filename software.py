@@ -135,18 +135,18 @@ def del_competitor(bracket1, comp):
 
 def add_competitor(bracket1, comp):
     global pressed
-    if comp.get() != "":
-        if len(comp.get()) > 20:
+    if comp.get().strip() != "":
+        if len(comp.get().strip()) > 20:
             messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
         else:
             copy = False
             for i in range(bracket1.num_competitors):
-                if bracket1.get_competitor_list()[i] == comp.get():
+                if bracket1.get_competitor_list()[i] == comp.get().strip():
                     copy = True
             if copy:
                 messagebox.showerror('Error', 'Error: Competitor is already in bracket')
             else:
-                bracket1.add_competitor(comp.get())
+                bracket1.add_competitor(comp.get().strip())
                 bracket1.begin_bracket()
                 pressed = True
     else:
@@ -329,15 +329,15 @@ def add_to_brackets(name, checks, button_nums1):
     global buttons
     global pressed
     brackets_within = "Error: Competitor is already in the following brackets:\n"
-    if name.get() != "":
-        if len(name.get()) > 20:
+    if name.get().strip() != "":
+        if len(name.get().strip()) > 20:
             messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
         else:
             copy = False
             for i in range(len(checks)):
                 if checks[i][0].get() == 1:
                     for j in range(brackets.get_tournament()[button_nums1[i]].num_competitors):
-                        if brackets.get_tournament()[button_nums1[i]].get_competitor_list()[j] == name.get():
+                        if brackets.get_tournament()[button_nums1[i]].get_competitor_list()[j] == name.get().strip():
                             copy = True
                             brackets_within += brackets.get_tournament()[
                         button_nums1[i]].get_bracket_name() + "\n"
@@ -346,7 +346,7 @@ def add_to_brackets(name, checks, button_nums1):
             else:
                 for i in range(len(checks)):
                     if checks[i][0].get() == 1:
-                        brackets.get_tournament()[button_nums1[i]].add_competitor(name.get())
+                        brackets.get_tournament()[button_nums1[i]].add_competitor(name.get().strip())
                         brackets.get_tournament()[button_nums1[i]].begin_bracket()
                         pressed = True
     else:
