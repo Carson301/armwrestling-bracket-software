@@ -333,7 +333,7 @@ def add_to_brackets(name, checks, button_nums1):
     global buttons
     count = -1
     for i in range(len(checks)):
-        if checks[i][0].get() == 1 and checkers[i][0].get() == 1:
+        if checks[i][0].get() == 1:
             count += 1
             add_competitor(brackets.get_tournament()[button_nums1[count]], name)
 
@@ -386,6 +386,7 @@ def draw_brackets_window(frame):
                 offvalue=0,
                 height=2,
                 width=20))
+        checkers2.append([var, classes[i]])
     frame2.configure(bg="springgreen3")
     row_counter = 0
     prev_button = "NA"
