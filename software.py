@@ -12,9 +12,11 @@ title = "Arm Wrestling Tournament"
 prev_menu_string = "main"
 pressed = True
 check_buttons = []
+check_buttons2 = []
 classes = ["0-154 R", "0-154 L", "155-176 R", "155-176 L", "177-198 R", "177-198 L", "199-220 R", "199-220 L", "221-240 R", "221-240 L", "241+ R", "241+ L"]
 brackets = Tournament.Tournament()
 checkers = []
+checkers2 = []
 buttons = []
 lines = []
 button_num = 0
@@ -59,6 +61,9 @@ def reset_start_frame():
     buttons_frame.pack(fill="both")
     frame2 = tk.Frame(start_frame, bg="seashell3")
     if menu_string == "bracket":
+        frame2.pack(fill="y", side="right")
+        frame2.configure(borderwidth=3, relief="solid")
+    if menu_string == "brackets":
         frame2.pack(fill="y", side="right")
         frame2.configure(borderwidth=3, relief="solid")
     if menu_string != "main":
@@ -130,24 +135,26 @@ def del_competitor(bracket1, comp):
 
 def add_competitor(bracket1, comp):
     global pressed
-    print(comp.get(), "here")
-    if comp.get() != "":
-        if len(comp.get()) > 20:
-            messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
-        else:
-            copy = False
-            for i in range(bracket1.num_competitors):
-                if bracket1.get_competitor_list()[i] == comp.get():
-                    copy = True
-            if copy:
-                messagebox.showerror('Error', 'Error: Competitor is already in bracket')
+    if menu_string == "bracket":
+        if comp.get() != "":
+            if len(comp.get()) > 20:
+                messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
             else:
-                bracket1.add_competitor(comp.get())
-                bracket1.begin_bracket()
-                pressed = True
+                copy = False
+                for i in range(bracket1.num_competitors):
+                    if bracket1.get_competitor_list()[i] == comp.get():
+                        copy = True
+                if copy:
+                    messagebox.showerror('Error', 'Error: Competitor is already in bracket')
+                else:
+                    bracket1.add_competitor(comp.get())
+                    bracket1.begin_bracket()
+                    pressed = True
+        else:
+            messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
     else:
-        messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
-
+        bracket1.add_competitor(comp.get())
+        pressed = True
 
 def draw_bracket_window(bracket, frame):
     global buttons
@@ -319,15 +326,32 @@ def switch_screen(string, bracket_name=None, button_num2=None):
     menu_string = string
     pressed = True
 
+def add_to_brackets(name, checks, button_nums1):
+    global brackets
+    global checkers
+    global buttons
+    count = -1
+    for i in range(len(checks)):
+        if checks[i][0].get() == 1 and checkers[i][0].get() == 1:
+            count += 1
+            add_competitor(brackets.get_tournament()[button_nums1[count]], name)
+
+
+
 def draw_brackets_window(frame):
     global buttons
+    global frame2
     global check_buttons
     global checkers
+    global check_buttons2
+    global checkers2
+    button_nums = []
     button_names = []
     for i in range(len(check_buttons)):
         if checkers[i][0].get() == 1:
             buttons.append(tk.Button(frame, background="springgreen3", width=10, activebackground="springgreen4", fg="white", text=checkers[i][1], font=('Serif-Sans 20 bold'), command=lambda screen_name="bracket", bracket_name=checkers[i][1], button_num2=len(buttons): switch_screen(screen_name, bracket_name, button_num2)))
             button_names.append(checkers[i][1])
+            button_nums.append(len(buttons) - 1)
     frame.columnconfigure(0, minsize=100, weight=0)
     frame.columnconfigure(1, minsize=100, weight=0)
     col_counter = 0
@@ -348,6 +372,35 @@ def draw_brackets_window(frame):
     if len(buttons) == 1:
         tk.Label(frame, text="154-176 R", font=('Serif-Sans 20 bold'), fg="Azure", bg="Azure").grid(row=0, column=1, padx=10, pady=5)
 
+    frame2.columnconfigure(0, minsize=10, weight=0)
+    frame2.columnconfigure(1, minsize=10, weight=0)
+    frame2.columnconfigure(2, minsize=10, weight=0)
+    input_add = tk.StringVar()
+    add_input = tk.Entry(frame2, textvariable=input_add, width=15)
+    add_input.grid(row=0, column=0, pady=5)
+    col_counter = 0
+    row_counter = 0
+    frame2.configure(bg="springgreen3")
+    for i in range(len(classes)):
+        if i % 2 == 0:
+            frame2.rowconfigure(i, minsize=20, weight=0)
+            row_counter += 1
+        var = tk.IntVar()
+        check_buttons2.append(tk.Checkbutton(frame2, bg="springgreen3", text=classes[i], variable=var,
+                                            onvalue=1,
+                                            offvalue=0,
+                                            height=2,
+                                            width=20))
+        checkers2.append([var, classes[i]])
+        check_buttons2[i].grid(row=row_counter, column=col_counter, padx=0, pady=0)
+        if col_counter == 0:
+            col_counter += 2
+        else:
+            col_counter = 0
+
+    frame2.rowconfigure(len(classes), minsize=20, weight=0)
+    submit = tk.Button(frame2, text="Submit", command=lambda name=input_add, checks=checkers2, button_nums1 = button_nums: add_to_brackets(name, checkers, button_nums1))
+    submit.grid(row=len(classes), column=1)
 
 
 def draw_menu_window(frame):
@@ -392,6 +445,8 @@ def updates():
     global buttons
     global check_buttons
     global checkers
+    global check_buttons2
+    global checkers2
     global lines
     global pressed
     global start_frame
@@ -414,6 +469,8 @@ def updates():
             lines.clear()
             draw_bracket_window(brackets.get_tournament()[button_num1], frame)
         if menu_string == "brackets":
+            check_buttons2.clear()
+            checkers2.clear()
             frame = draw_scrollbar()
             lines.clear()
             buttons.clear()  # Reset button list
