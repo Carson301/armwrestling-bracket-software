@@ -9,6 +9,17 @@ import Tournament
 from tkinter import messagebox
 
 title = "Arm Wrestling Tournament"
+check_button = {"Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
+                "Semi-Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
+                "Amateur Right": [[], [["0-154", "176-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0]]],
+                "Novice Right": [[], [["0-198", "199+"], [0, 0]]],
+                "Master Right": [[], [["0-198", "199+"], [0, 0]]],
+                "Women Right": [[], [["0-143", "144+"], [0, 0]]],
+                "Pro Left": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
+                "Semi-Pro Left": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
+                "Amateur Left": [[], [["0-154", "176-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0]]],
+                "Novice Left": [[], [["0-198", "199+"], [0, 0]]]
+                }
 prev_menu_string = "main"
 pressed = True
 check_buttons = []
@@ -428,32 +439,59 @@ def draw_brackets_window(frame):
 def draw_menu_window(frame):
     global check_buttons
     global checkers
+    global check_button
+    frames = []
+    row_counter = 0
+    column_counter = -1
     frame.columnconfigure(0, minsize=10, weight=0)
     frame.columnconfigure(1, minsize=10, weight=0)
     frame.columnconfigure(2, minsize=10, weight=0)
-    col_counter = 0
-    row_counter = -1
-    frame.configure(bg="springgreen3")
-    for i in range(len(classes)):
-        if i % 2 == 0:
-            frame.rowconfigure(i, minsize=20, weight=0)
-            row_counter += 1
-        var = tk.IntVar()
-        check_buttons.append(tk.Checkbutton(frame, bg="springgreen3", text=classes[i], variable=var,
-                onvalue=1,
-                offvalue=0,
-                height=2,
-                width=20))
-        checkers.append([var, classes[i]])
-        check_buttons[i].grid(row=row_counter, column=col_counter, padx=0, pady=0)
-        if col_counter == 0:
-            col_counter += 2
-        else:
-            col_counter = 0
+    frame.columnconfigure(3, minsize=10, weight=0)
+    frame.columnconfigure(4, minsize=10, weight=0)
+    frame.columnconfigure(5, minsize=10, weight=0)
+    frame.rowconfigure(0, minsize=10, weight=0)
+    frame.rowconfigure(1, minsize=10, weight=0)
+    for i in range(12):
+        if i == 5:
+            column_counter = -1
+        column_counter += 1
+        frames.append(tk.Frame(frame).grid(row=row_counter, column=column_counter))
 
-    frame.rowconfigure(len(classes), minsize=20, weight=0)
-    submit = tk.Button(frame, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
-    submit.grid(row=len(classes), column=1)
+    count = -1
+    for key in check_button:
+        count += 1
+        for i in range(len(check_button[key][1][0])):
+            var = tk.IntVar()
+            check_button[key][0].append(tk.Checkbutton(frames[count], bg="springgreen3", text=check_button[key][1][0][i], variable=var,
+                                                onvalue=1,
+                                                offvalue=0,
+                                                height=2,
+                                                width=20).pack(fill='both', expand=True))
+            print(check_button[key][1][1][i])
+            check_button[key][1][1][i] = var.get()
+    # col_counter = 0
+    # row_counter = -1
+    # frame.configure(bg="springgreen3")
+    # for i in range(len(classes)):
+    #     if i % 2 == 0:
+    #         frame.rowconfigure(i, minsize=20, weight=0)
+    #         row_counter += 1
+    #     var = tk.IntVar()
+    #     check_buttons.append(tk.Checkbutton(frame, bg="springgreen3", text=classes[i], variable=var,
+    #             onvalue=1,
+    #             offvalue=0,
+    #             height=2,
+    #             width=20))
+    #     checkers.append([var, classes[i]])
+    #     check_buttons[i].grid(row=row_counter, column=col_counter, padx=0, pady=0)
+    #     if col_counter == 0:
+    #         col_counter += 2
+    #     else:
+    #         col_counter = 0
+    #
+    # frame.rowconfigure(len(classes), minsize=20, weight=0)
+    # submit = tk.Button(frame, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
+    # submit.grid(row=len(classes), column=1)
 
 def draw_main_window(frame):
     global buttons
