@@ -18,7 +18,9 @@ check_button = {"Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "1
                 "Pro Left": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
                 "Semi-Pro Left": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
                 "Amateur Left": [[], [["0-154", "176-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0]]],
-                "Novice Left": [[], [["0-198", "199+"], [0, 0]]]
+                "Novice Left": [[], [["0-198", "199+"], [0, 0]]],
+                "Master Left": [[], [["0-198", "199+"], [0, 0]]],
+                "Women Left": [[], [["0-143", "144+"], [0, 0]]],
                 }
 prev_menu_string = "main"
 pressed = True
@@ -453,8 +455,9 @@ def draw_menu_window(frame1):
     frame.rowconfigure(0, minsize=10, weight=0)
     frame.rowconfigure(1, minsize=10, weight=0)
     for i in range(12):
-        if i == 5:
+        if i == 6:
             column_counter = -1
+            row_counter = 1
         column_counter += 1
         frames.append(tk.Frame(frame))
         frames[i].grid(row=row_counter, column=column_counter)
@@ -469,9 +472,8 @@ def draw_menu_window(frame1):
                                                 offvalue=0,
                                                 height=2,
                                                 width=20))
-            print(check_button[key][1][1][i])
             check_button[key][1][1][i] = var.get()
-            check_button[key][0][i].grid()
+            check_button[key][0][i].grid(row=i, column=0)
     # col_counter = 0
     # row_counter = -1
     # frame.configure(bg="springgreen3")
