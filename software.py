@@ -436,10 +436,11 @@ def draw_brackets_window(frame):
     submit.grid(row=len(classes), column=1)
 
 
-def draw_menu_window(frame):
+def draw_menu_window(frame1):
     global check_buttons
     global checkers
     global check_button
+    frame = frame1
     frames = []
     row_counter = 0
     column_counter = -1
@@ -455,8 +456,8 @@ def draw_menu_window(frame):
         if i == 5:
             column_counter = -1
         column_counter += 1
-        frames.append(tk.Frame(frame).grid(row=row_counter, column=column_counter))
-    tk.Label(frames[0], text='text').pack()
+        frames.append(tk.Frame(frame))
+        frames[i].grid(row=row_counter, column=column_counter)
 
     count = -1
     for key in check_button:
@@ -467,9 +468,10 @@ def draw_menu_window(frame):
                                                 onvalue=1,
                                                 offvalue=0,
                                                 height=2,
-                                                width=20).pack())
+                                                width=20))
             print(check_button[key][1][1][i])
             check_button[key][1][1][i] = var.get()
+            check_button[key][0][i].grid()
     # col_counter = 0
     # row_counter = -1
     # frame.configure(bg="springgreen3")
