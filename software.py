@@ -376,11 +376,13 @@ def draw_brackets_window(frame):
     global check_button2
     button_nums = []
     button_names = []
-    for i in range(len(check_buttons)):
-        if checkers[i][0].get() == 1:
-            buttons.append(tk.Button(frame, background="springgreen3", width=10, activebackground="springgreen4", fg="white", text=checkers[i][1], font=('Serif-Sans 20 bold'), command=lambda screen_name="bracket", bracket_name=checkers[i][1], button_num2=len(buttons): switch_screen(screen_name, bracket_name, button_num2)))
-            button_names.append(checkers[i][1])
-            button_nums.append(len(buttons) - 1)
+    for key in check_button:
+        for i in range(len(check_button[key][1][1])):
+            print(check_button[key][1][1][i])
+            if check_button[key][1][1][i] == 1:
+                buttons.append(tk.Button(frame, background="springgreen3", width=10, activebackground="springgreen4", fg="white", text=check_button[key][1][0][i], font=('Serif-Sans 20 bold'), command=lambda screen_name="bracket", bracket_name=check_button[key][1][0][i], button_num2=len(buttons): switch_screen(screen_name, bracket_name, button_num2)))
+                button_names.append(check_button[key][1][0][i])
+                button_nums.append(len(buttons) - 1)
     frame.columnconfigure(0, minsize=100, weight=0)
     frame.columnconfigure(1, minsize=100, weight=0)
     col_counter = 0
@@ -400,6 +402,8 @@ def draw_brackets_window(frame):
         prev_button = button_names[i]
     if len(buttons) == 1:
         tk.Label(frame, text="154-176 R", font=('Serif-Sans 20 bold'), fg="Azure", bg="Azure").grid(row=0, column=1, padx=10, pady=5)
+
+    # Where brackets and adding to brackets separate
 
     frame2.columnconfigure(0, minsize=10, weight=0)
     frame2.columnconfigure(1, minsize=10, weight=0)
