@@ -456,6 +456,7 @@ def draw_menu_window(frame):
             column_counter = -1
         column_counter += 1
         frames.append(tk.Frame(frame).grid(row=row_counter, column=column_counter))
+    tk.Label(frames[0], text='text').pack()
 
     count = -1
     for key in check_button:
@@ -466,7 +467,7 @@ def draw_menu_window(frame):
                                                 onvalue=1,
                                                 offvalue=0,
                                                 height=2,
-                                                width=20).pack(fill='both', expand=True))
+                                                width=20).pack())
             print(check_button[key][1][1][i])
             check_button[key][1][1][i] = var.get()
     # col_counter = 0
