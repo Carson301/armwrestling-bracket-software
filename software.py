@@ -461,26 +461,28 @@ def draw_menu_window(frame1):
     frame3.rowconfigure(0, minsize=10, weight=0)
     for i in range(6):
         column_counter += 1
-        frames.append(tk.Frame(frame, relief='solid', borderwidth=2))
-        frames[i].grid(row=row_counter, column=column_counter)
+        frames.append(tk.Frame(frame, relief='solid', borderwidth=2, bg="springgreen3"))
+        frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
     column_counter = -1
     for i in range(6, 12):
         column_counter += 1
-        frames.append(tk.Frame(frame3, relief='solid', borderwidth=2))
-        frames[i].grid(row=row_counter, column=column_counter)
+        frames.append(tk.Frame(frame3, relief='solid', borderwidth=2, bg="springgreen3"))
+        frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
 
     count = -1
     for key in check_button:
         count += 1
-        for i in range(len(check_button[key][1][0])):
+        label = tk.Label(frames[count], text=key, font='bold', bg="springgreen3")
+        label.grid(row=0, column=0)
+        for i in range(0, len(check_button[key][1][0])):
             var = tk.IntVar()
-            check_button[key][0].append(tk.Checkbutton(frames[count], bg="springgreen3", text=check_button[key][1][0][i], variable=var,
+            check_button[key][0].append(tk.Checkbutton(frames[count], bg="springgreen3", font='Arial 10 bold', text=check_button[key][1][0][i], variable=var,
                                                 onvalue=1,
                                                 offvalue=0,
                                                 height=2,
-                                                width=20))
+                                                width=15))
             check_button[key][1][1][i] = var.get()
-            check_button[key][0][i].grid(row=i, column=0)
+            check_button[key][0][i].grid(row=i + 1, column=0)
 
     submit = tk.Button(frame1, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
     submit.grid(row=2, column=0)
