@@ -372,10 +372,8 @@ def add_to_brackets(name, checks, button_nums1):
 def draw_brackets_window(frame):
     global buttons
     global frame2
-    global check_buttons
-    global checkers
-    global check_buttons2
-    global checkers2
+    global check_button
+    global check_button2
     button_nums = []
     button_names = []
     for i in range(len(check_buttons)):
@@ -439,11 +437,12 @@ def draw_brackets_window(frame):
 
 
 def draw_menu_window(frame1):
-    global check_buttons
-    global checkers
     global check_button
-    frame = frame1
     frames = []
+    frame = tk.Frame(frame1, relief='solid', borderwidth=2)
+    frame3 = tk.Frame(frame1, relief='solid', borderwidth=2)
+    frame.grid(row=0, column=0)
+    frame3.grid(row=1, column=0)
     row_counter = 0
     column_counter = -1
     frame.columnconfigure(0, minsize=10, weight=0)
@@ -453,13 +452,21 @@ def draw_menu_window(frame1):
     frame.columnconfigure(4, minsize=10, weight=0)
     frame.columnconfigure(5, minsize=10, weight=0)
     frame.rowconfigure(0, minsize=10, weight=0)
-    frame.rowconfigure(1, minsize=10, weight=0)
-    for i in range(12):
-        if i == 6:
-            column_counter = -1
-            row_counter = 1
+    frame3.columnconfigure(0, minsize=10, weight=0)
+    frame3.columnconfigure(1, minsize=10, weight=0)
+    frame3.columnconfigure(2, minsize=10, weight=0)
+    frame3.columnconfigure(3, minsize=10, weight=0)
+    frame3.columnconfigure(4, minsize=10, weight=0)
+    frame3.columnconfigure(5, minsize=10, weight=0)
+    frame3.rowconfigure(0, minsize=10, weight=0)
+    for i in range(6):
         column_counter += 1
-        frames.append(tk.Frame(frame))
+        frames.append(tk.Frame(frame, relief='solid', borderwidth=2))
+        frames[i].grid(row=row_counter, column=column_counter)
+    column_counter = -1
+    for i in range(6, 12):
+        column_counter += 1
+        frames.append(tk.Frame(frame3, relief='solid', borderwidth=2))
         frames[i].grid(row=row_counter, column=column_counter)
 
     count = -1
@@ -474,29 +481,9 @@ def draw_menu_window(frame1):
                                                 width=20))
             check_button[key][1][1][i] = var.get()
             check_button[key][0][i].grid(row=i, column=0)
-    # col_counter = 0
-    # row_counter = -1
-    # frame.configure(bg="springgreen3")
-    # for i in range(len(classes)):
-    #     if i % 2 == 0:
-    #         frame.rowconfigure(i, minsize=20, weight=0)
-    #         row_counter += 1
-    #     var = tk.IntVar()
-    #     check_buttons.append(tk.Checkbutton(frame, bg="springgreen3", text=classes[i], variable=var,
-    #             onvalue=1,
-    #             offvalue=0,
-    #             height=2,
-    #             width=20))
-    #     checkers.append([var, classes[i]])
-    #     check_buttons[i].grid(row=row_counter, column=col_counter, padx=0, pady=0)
-    #     if col_counter == 0:
-    #         col_counter += 2
-    #     else:
-    #         col_counter = 0
-    #
-    # frame.rowconfigure(len(classes), minsize=20, weight=0)
-    # submit = tk.Button(frame, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
-    # submit.grid(row=len(classes), column=1)
+
+    submit = tk.Button(frame1, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
+    submit.grid(row=2, column=0)
 
 def draw_main_window(frame):
     global buttons
