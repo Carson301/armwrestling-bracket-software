@@ -9,23 +9,23 @@ import Tournament
 from tkinter import messagebox
 
 title = "Arm Wrestling Tournament"
-check_button = {"Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
-                "Semi-Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
-                "Amateur Right": [[], [["0-154", "176-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0]]],
-                "Novice Right": [[], [["0-198", "199+"], [0, 0]]],
-                "Master Right": [[], [["0-198", "199+"], [0, 0]]],
-                "Women Right": [[], [["0-143", "144+"], [0, 0]]],
-                "Pro Left": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
-                "Semi-Pro Left": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0]]],
-                "Amateur Left": [[], [["0-154", "176-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0]]],
-                "Novice Left": [[], [["0-198", "199+"], [0, 0]]],
-                "Master Left": [[], [["0-198", "199+"], [0, 0]]],
-                "Women Left": [[], [["0-143", "144+"], [0, 0]]],
+check_button = {"Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]],
+                "Semi-Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]],
+                "Amateur Right": [[], [["0-154", "176-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]],
+                "Novice Right": [[], [["0-198", "199+"], [0, 0], [0, 0]]],
+                "Master Right": [[], [["0-198", "199+"], [0, 0], [0, 0]]],
+                "Women Right": [[], [["0-143", "144+"], [0, 0], [0, 0]]],
+                "Pro Left": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]],
+                "Semi-Pro Left": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]],
+                "Amateur Left": [[], [["0-154", "176-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]],
+                "Novice Left": [[], [["0-198", "199+"], [0, 0], [0, 0]]],
+                "Master Left": [[], [["0-198", "199+"], [0, 0], [0, 0]]],
+                "Women Left": [[], [["0-143", "144+"], [0, 0], [0, 0]]],
                 }
 prev_menu_string = "main"
 pressed = True
 check_buttons = []
-check_buttons2 = []
+check_button2 = []
 classes = ["0-154 R", "0-154 L", "155-176 R", "155-176 L", "177-198 R", "177-198 L", "199-220 R", "199-220 L", "221-240 R", "221-240 L", "241+ R", "241+ L"]
 brackets = Tournament.Tournament()
 checkers = []
@@ -340,27 +340,35 @@ def add_to_brackets(name, checks, button_nums1):
     global checkers
     global buttons
     global pressed
+    button_count = -1
+    button_count2 = -1
     brackets_within = "Error: Competitor is already in the following brackets:\n"
     if name.get().strip() != "":
         if len(name.get().strip()) > 20:
             messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
         else:
             copy = False
-            for i in range(len(checks)):
-                if checks[i][0].get() == 1:
-                    for j in range(brackets.get_tournament()[button_nums1[i]].num_competitors):
-                        if brackets.get_tournament()[button_nums1[i]].get_competitor_list()[j] == name.get().strip():
-                            copy = True
-                            brackets_within += brackets.get_tournament()[
-                        button_nums1[i]].get_bracket_name() + "\n"
+            for key in checks:
+                for i in range(len(checks[key][1][1])):
+                    if checks[key][1][1][i].get() == 1:
+                        button_count += 1
+                    if checks[key][1][2][i].get() == 1:
+                        print(button_count)
+                        for j in range(brackets.get_tournament()[button_nums1[button_count]].num_competitors):
+                            if brackets.get_tournament()[button_nums1[button_count]].get_competitor_list()[j] == name.get().strip():
+                                copy = True
+                                brackets_within += brackets.get_tournament()[button_nums1[button_count]].get_bracket_name() + "\n"
             if copy == True:
                 messagebox.showerror('Error', brackets_within)
             else:
-                for i in range(len(checks)):
-                    if checks[i][0].get() == 1:
-                        brackets.get_tournament()[button_nums1[i]].add_competitor(name.get().strip())
-                        brackets.get_tournament()[button_nums1[i]].begin_bracket()
-                        pressed = True
+                for key in checks:
+                    for j in range(len(checks[key][1][1])):
+                        if checks[key][1][1][j].get() == 1:
+                            button_count2 += 1
+                        if checks[key][1][2][j].get() == 1:
+                            brackets.get_tournament()[button_nums1[button_count2]].add_competitor(name.get().strip())
+                            brackets.get_tournament()[button_nums1[button_count2]].begin_bracket()
+                            pressed = True
     else:
         messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
 
@@ -422,45 +430,51 @@ def draw_brackets_window(frame1):
                 button_names.append(check_button[key][1][0][i])
                 button_nums.append(len(buttons) - 1)
                 buttons[len(buttons) - 1].grid(row=i + 1, column=0, pady=4)
-
-    # count = -1
-    # for key in check_button:
-    #     for i in range(len(check_button[key][1][1])):
-    #         if check_button[key][1][1][i].get() == 1:
-    #             buttons.append(tk.Button(frame, background="springgreen3", width=10, activebackground="springgreen4", fg="white", text=check_button[key][1][0][i], font=('Serif-Sans 20 bold'), command=lambda screen_name="bracket", bracket_name=check_button[key][1][0][i], button_num2=len(buttons): switch_screen(screen_name, bracket_name, button_num2)))
-    #             button_names.append(check_button[key][1][0][i])
-    #             button_nums.append(len(buttons) - 1)
-    # frame.columnconfigure(0, minsize=100, weight=0)
-    # frame.columnconfigure(1, minsize=100, weight=0)
-    # col_counter = 0
-    # row_counter = -1
-    # prev_button = "NA"
-    # for i in range(len(buttons)):
-    #     if button_names[i][:-1] == prev_button[:-1]:
-    #         col_counter = 1
-    #     else:
-    #         frame.rowconfigure(i, minsize=50, weight=0)
-    #         row_counter += 1
-    #         if "L" in button_names[i]:
-    #             col_counter = 1
-    #         else:
-    #             col_counter = 0
-    #     buttons[i].grid(row=row_counter, column=col_counter, padx=5, pady=5)
-    #     prev_button = button_names[i]
-    # if len(buttons) == 1:
-    #     tk.Label(frame, text="154-176 R", font=('Serif-Sans 20 bold'), fg="Azure", bg="Azure").grid(row=0, column=1, padx=10, pady=5)
-    #
-    # # Where brackets and adding to brackets separate
-    #
-    # frame2.columnconfigure(0, minsize=10, weight=0)
-    # frame2.columnconfigure(1, minsize=10, weight=0)
-    # frame2.columnconfigure(2, minsize=10, weight=0)
-    # input_add = tk.StringVar()
-    # add_input = tk.Entry(frame2, textvariable=input_add, width=15)
-    # add_input.grid(row=0, column=0, pady=5)
+    print(button_nums)
+# Separator
+    frame2.columnconfigure(0, minsize=10, weight=0)
+    frame2.columnconfigure(1, minsize=10, weight=0)
+    frame2.columnconfigure(2, minsize=10, weight=0)
+    input_add = tk.StringVar()
+    add_input = tk.Entry(frame2, textvariable=input_add, width=15)
+    add_input.grid(row=0, column=0, pady=5)
+    count = -1
+    count2 = -1
+    frames2 = []
+    row_counter = 0
+    for key in check_button:
+        count = -1
+        check_button[key][0].clear()
+        for i in range(len(check_button[key][1][2])):
+            if check_button[key][1][1][i].get() == 1:
+                if count == -1:
+                    frames2.append(tk.Frame(frame2, borderwidth=2, relief='solid'))
+                    frames2[len(frames2) - 1].grid(row=len(frames2) + 2, column=0, sticky='ns')
+                    label = tk.Label(frames2[count2], text=key, font='bold', bg="springgreen3")
+                    label.grid(row=0, column=0)
+                    count2 += 1
+                count += 1
+                var = tk.IntVar()
+                check_button[key][0].append(
+                    tk.Checkbutton(frames2[count2], background="springgreen3", activebackground="springgreen4", text=button_names[count],
+                                   variable=var,
+                                   onvalue=1,
+                                   offvalue=0,
+                                   height=2,
+                                   width=20))
+                check_button[key][1][2][i] = var
+                check_button[key][0][count].grid(row=count + 1, column=0)
+            else:
+                check_button[key][1][2][i] = tk.IntVar()
+    # frame2.rowconfigure(len(classes), minsize=20, weight=0)
+    submit = tk.Button(frame2, text="Submit",
+                       command=lambda name=input_add, checks=check_button, button_nums1=button_nums: add_to_brackets(name,
+                                                                                                                  checks,
+                                                                                                                  button_nums1))
+    submit.grid(row=len(frames), column=0)
     # for i in range(len(buttons)):
     #     var = tk.IntVar()
-    #     check_buttons2.append(tk.Checkbutton(frame2, background="springgreen3", activebackground="springgreen4", text=button_names[i], variable=var,
+    #     check_button.append(tk.Checkbutton(frame2, background="springgreen3", activebackground="springgreen4", text=button_names[i], variable=var,
     #             onvalue=1,
     #             offvalue=0,
     #             height=2,
@@ -482,9 +496,7 @@ def draw_brackets_window(frame1):
     #     check_buttons2[i].grid(row=row_counter, column=col_counter, padx=5, pady=5)
     #     prev_button = button_names[i]
     #
-    # frame2.rowconfigure(len(classes), minsize=20, weight=0)
-    # submit = tk.Button(frame2, text="Submit", command=lambda name=input_add, checks=checkers2, button_nums1 = button_nums: add_to_brackets(name, checks, button_nums1))
-    # submit.grid(row=len(classes), column=1)
+
 
 
 def draw_menu_window(frame1):
