@@ -78,7 +78,7 @@ def main():
     root.mainloop()
 
 def reset_start_frame():
-    global start_frame, buttons_frame, frame2, prev_menu_string
+    global start_frame, buttons_frame, frame2, prev_menu_string, title_label
     # The screen needs to be reset
     # So destroy all current widgets of the start_frame
     for widgets in start_frame.winfo_children():
@@ -105,13 +105,19 @@ def reset_start_frame():
         go_back.grid(row=0, column=0)
 
 def create_tournament():
-    global brackets
-    global check_button
+    global brackets, check_button
+    # Create a tournament object
     brackets = Tournament.Tournament()
+    # For each "key" in check_button, key being the weight class
     for key in check_button:
-        for i in range(len(check_button[key][1][1])):
-            if check_button[key][1][1][i].get() == 1:
-                bracket = SingleBracket.SingleBracket([], check_button[key][1][0][i])
+        weight_class_checkers = check_button[key][1][1]
+        # For each weight class
+        for i in range(len(weight_class_checkers)):
+            # If the checker value for the corresponding weight class is on
+            if weight_class_checkers[i].get() == 1:
+                # Create and begin a bracket for that weight class and add it to the tournament
+                weight_classes = check_button[key][1][0]
+                bracket = SingleBracket.SingleBracket([], weight_classes[i])
                 bracket.begin_bracket()
                 brackets.get_tournament().append(bracket)
 
