@@ -17,6 +17,8 @@ start_frame = tk.Frame(root, bg="white")
 buttons_frame = tk.Frame(start_frame, bg="red")
 # A frame for all adding to brackets widgets
 frame2 = tk.Frame(start_frame, bg="red")
+# Canvas for scrollbars
+canvas = tk.Canvas(start_frame)
 
 # Title for current screen
 title = "Arm Wrestling Tournament"
@@ -122,10 +124,9 @@ def create_tournament():
                 brackets.get_tournament().append(bracket)
 
 def draw_scrollbar():
-    global canvas
-    global start_frame
-    global menu_string
+    global canvas, start_frame, menu_string
 
+    # Create a canvas
     canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure", borderwidth=3, relief="solid")
 
     # Create scrollbars
@@ -135,7 +136,6 @@ def draw_scrollbar():
     xscrollbar.pack(side="bottom", fill="x")
     canvas.pack(side="top", fill="both", expand=True)
 
-
     # Attach canvas to scrollbars
     canvas.configure(xscrollcommand=xscrollbar.set)
     canvas.configure(yscrollcommand=yscrollbar.set)
@@ -144,18 +144,16 @@ def draw_scrollbar():
     frame = tk.Frame(canvas, bg="Azure")
     x_var = frame.winfo_screenwidth() / 2
     y_var = frame.winfo_screenheight() / 2
+    # Depending on menu_string use different x and y vars
     if menu_string == "main" or menu_string == "pick":
         y_var = (frame.winfo_screenheight() / 2) - 50
     if menu_string == "pick":
         frame.configure(borderwidth=3, relief="solid")
-    if menu_string == "brackets":
-        y_var = 0
-    if menu_string == "bracket":
+    if menu_string == "bracket" or menu_string == "brackets":
         y_var = 0
         x_var = 0
     canvas.create_window((x_var, y_var), window=frame, anchor="center")
     frame.bind('<Configure>', set_scrollregion)
-
 
     return frame
 
