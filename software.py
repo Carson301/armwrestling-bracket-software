@@ -37,8 +37,10 @@ lines = []
 
 # Whether a button has been pressed
 pressed = True
-# To know which button was pressed
-button_num = 0
+# To know which bracket button was pressed
+brackets_button_num = 0
+# To know which node button was pressed
+node_button_num = 0
 
 
 # A dictionary full of information about the tournament and the check buttons used within the program
@@ -337,36 +339,24 @@ def draw_bracket_window(bracket, frame):
         buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 1][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_count_ref=bracket.get_num_nodes() - 1: match_result(node_count_ref, bracket)))
         buttons[len(buttons) - 1].grid(row=2, column=int(bracket.get_num_levels() / 2), sticky=tk.W + tk.E, padx=5, pady=0)
 
-def switch_screen(string, bracket_name=None, button_num2=None):
-    global menu_string
-    global button_num1
-    global button_num
-    global pressed
-    global title
-    global prev_menu_string
-    prev_menu_string = ""
-    if menu_string == "main":
+def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
+    global menu_string, brackets_button_num, pressed, title, prev_menu_string
+    # Depending on the menu_string alter the screen variables to fit that screen
+    if string == "main":
         title = "Arm Wrestling Tournament"
-        button_num = 0
-    if menu_string == "pick":
-        title = "Arm Wrestling Tournament"
-        button_num = 0
-        if string == "brackets":
-            create_tournament()
-            title = "Arm Wrestling Tournament"
-            button_num = 0
-    if menu_string == "brackets":
-        if string == "bracket":
-            title = bracket_name
-            button_num1 = button_num2
-    if menu_string == "bracket":
-        prev_menu_string = "brackets"
+        brackets_button_num = 0
     if string == "pick":
         prev_menu_string = "main"
     if string == "brackets":
+        create_tournament()
+        title = "Arm Wrestling Tournament"
+        brackets_button_num = 0
         prev_menu_string = "pick"
     if string == "bracket":
+        title = bracket_name
+        brackets_button_num = brackets_button_num_ref
         prev_menu_string = "brackets"
+    # Set menu_string to the new screen name
     menu_string = string
     pressed = True
 
@@ -602,8 +592,8 @@ def updates():
     global lines
     global pressed
     global start_frame
-    global button_num
-    global button_num1
+    global node_button_num
+    global brackets_button_num
     global menu_string
     if pressed:
         reset_start_frame()
@@ -621,7 +611,7 @@ def updates():
             frame = draw_scrollbar()
             buttons.clear()  # Reset button list
             lines.clear()
-            draw_bracket_window(brackets.get_tournament()[button_num1], frame)
+            draw_bracket_window(brackets.get_tournament()[brackets_button_num], frame)
         if menu_string == "brackets":
             for key in check_button:
                 check_button[key][0].clear()
@@ -638,11 +628,11 @@ def updates():
 
 def match_result(entry, bracket):
     global pressed
-    global button_num
-    button_num = entry
-    if button_num < bracket.get_num_nodes() - 1 and bracket.check_if_pair(
-            button_num):  # Call bracket functions to produce a result to a match given the button pressed
-        if bracket.get_bracket()[button_num].get_value() == bracket.find_default_next(button_num).get_value():
+    global node_button_num
+    node_button_num = entry
+    if node_button_num < bracket.get_num_nodes() - 1 and bracket.check_if_pair(
+            node_button_num):  # Call bracket functions to produce a result to a match given the button pressed
+        if bracket.get_bracket()[node_button_num].get_value() == bracket.find_default_next(node_button_num).get_value():
             bracket.match_undo(entry)
         else:
             bracket.match_winner(entry)
