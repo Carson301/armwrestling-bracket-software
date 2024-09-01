@@ -172,6 +172,7 @@ def del_competitor(bracket, competitor_name):
     pressed = True
 
 def add_competitor(bracket, competitor_name):
+    print(bracket.get_bracket_name())
     global pressed
     # Make sure competitor name isn't nothing
     if competitor_name.get().strip() != "":
@@ -341,6 +342,7 @@ def draw_bracket_window(bracket, frame):
         buttons[len(buttons) - 1].grid(row=2, column=int(bracket.get_num_levels() / 2), sticky=tk.W + tk.E, padx=5, pady=0)
 
 def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
+    print(brackets_button_num_ref)
     global menu_string, brackets_button_num, pressed, title, prev_menu_string
     # Depending on the menu_string alter the screen variables to fit that screen
     if string == "main":
@@ -443,13 +445,13 @@ def draw_brackets_window(frame):
             frames.append(tk.Frame(frame_two, relief='solid', borderwidth=2, bg="springgreen3"))
             frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
     frame_count = -1
+    buttons = []
     for key in check_button:
         frame_count += 1
         # Create a label for each frame, that is the current brackets title
         label = tk.Label(frames[frame_count], text=key, width=15, font='bold', bg="springgreen3")
         label.grid(row=0, column=0)
         weight_class_checkers = check_button[key][1][1]
-        buttons = check_button[key][0]
         weight_class_names = check_button[key][1][0]
         # For each weight_class_checker create a corresponding check button
         for i in range(len(weight_class_checkers)):
@@ -486,8 +488,9 @@ def draw_brackets_window(frame):
                 if button_count == -1:
                     frames.append(tk.Frame(frame2, borderwidth=2, relief='solid'))
                     frames[len(frames) - 1].grid(row=len(frames) + 1, column=0, sticky='ns')
-                    label = tk.Label(frames[frame_count], text=key, font='bold', bg="springgreen3")
+                    label = tk.Label(frames[len(frames) - 1], text=key, font='bold', bg="springgreen3")
                     label.grid(row=0, column=0)
+                    frame_count += 1
                 button_count += 1
 
                 # For each weight_class_checker create a corresponding check button
@@ -501,7 +504,6 @@ def draw_brackets_window(frame):
                                    width=15))
                 weight_class_checkers_2[i] = var
                 check_buttons[button_count].grid(row=i + 1, column=0)
-                frame_count += 1
             else:
                 weight_class_checkers_2[i] = tk.IntVar()
     submit = tk.Button(frame2, text="Submit",
@@ -600,6 +602,7 @@ def updates():
             frame = draw_scrollbar()
             buttons.clear()  # Reset button list
             lines.clear()
+            print(brackets_button_num)
             draw_bracket_window(brackets.get_tournament()[brackets_button_num], frame)
         if menu_string == "brackets":
             for key in check_button:
