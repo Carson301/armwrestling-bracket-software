@@ -362,8 +362,8 @@ def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
     menu_string = string
     pressed = True
 
-def add_to_brackets(name, check_button_ref):
-    global brackets, pressed
+def add_to_brackets(name):
+    global brackets, pressed, check_button
     # Index of button that references the current bracket
     button_count = -1
     brackets_within = "Error: Competitor is already in the following brackets:\n"
@@ -374,10 +374,10 @@ def add_to_brackets(name, check_button_ref):
             # Boolean to check if competitor is already in the bracket
             already_in_bracket = False
             # For each weight class/bracket
-            for key in check_button_ref:
+            for key in check_button:
                 # Checkers for the weight classes for both checkbox areas of the program
                 weight_class_checkers = check_button[key][1][1]
-                weight_class_checkers_2 = check_button_ref[key][1][2]
+                weight_class_checkers_2 = check_button[key][1][2]
                 for i in range(len(weight_class_checkers)):
                     # Increment button count if the box was checked with the first checkboxes
                     if weight_class_checkers[i].get() == 1:
@@ -397,10 +397,10 @@ def add_to_brackets(name, check_button_ref):
             # If no other errors
             else:
                 button_count = -1
-                for key in check_button_ref:
+                for key in check_button:
                     # Checkers for the weight classes for both checkbox areas of the program
                     weight_class_checkers = check_button[key][1][1]
-                    weight_class_checkers_2 = check_button_ref[key][1][2]
+                    weight_class_checkers_2 = check_button[key][1][2]
                     for j in range(len(weight_class_checkers)):
                         if weight_class_checkers[j].get() == 1:
                             button_count += 1
@@ -413,94 +413,102 @@ def add_to_brackets(name, check_button_ref):
         messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
 
 
-def draw_brackets_window(frame1):
+def draw_brackets_window(frame):
     global buttons, frame2, check_button
     button_names = []
     frames = []
-    frame = tk.Frame(frame1, relief='solid', borderwidth=2)
-    frame3 = tk.Frame(frame1, relief='solid', borderwidth=2)
-    frame.grid(row=0, column=0)
-    frame3.grid(row=1, column=0)
+    # Create two frames to break up the window
+    frame_one = tk.Frame(frame, relief='solid', borderwidth=2)
+    frame_two = tk.Frame(frame, relief='solid', borderwidth=2)
+    frame_one.grid(row=0, column=0)
+    frame_two.grid(row=1, column=0)
     row_counter = 0
     column_counter = -1
-    frame.columnconfigure(0, minsize=10, weight=0)
-    frame.columnconfigure(1, minsize=10, weight=0)
-    frame.columnconfigure(2, minsize=10, weight=0)
-    frame.columnconfigure(3, minsize=10, weight=0)
-    frame.columnconfigure(4, minsize=10, weight=0)
-    frame.columnconfigure(5, minsize=10, weight=0)
-    frame.rowconfigure(0, minsize=10, weight=0)
-    frame3.columnconfigure(0, minsize=10, weight=0)
-    frame3.columnconfigure(1, minsize=10, weight=0)
-    frame3.columnconfigure(2, minsize=10, weight=0)
-    frame3.columnconfigure(3, minsize=10, weight=0)
-    frame3.columnconfigure(4, minsize=10, weight=0)
-    frame3.columnconfigure(5, minsize=10, weight=0)
-    frame3.rowconfigure(0, minsize=10, weight=0)
+    # Create columns and rows for those frames
     for i in range(6):
-        column_counter += 1
-        frames.append(tk.Frame(frame, relief='solid', borderwidth=2, bg="springgreen3"))
-        frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
-    column_counter = -1
-    for i in range(6, 12):
-        column_counter += 1
-        frames.append(tk.Frame(frame3, relief='solid', borderwidth=2, bg="springgreen3"))
-        frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
-    count = -1
+        frame_one.columnconfigure(i, minsize=10, weight=0)
+        frame_two.columnconfigure(i, minsize=10, weight=0)
+    frame_one.rowconfigure(0, minsize=10, weight=0)
+    frame_two.rowconfigure(0, minsize=10, weight=0)
+    # Create 6 frames within each of the frames above to separate out the window even more
+    for i in range(12):
+        if i < 6:
+            column_counter += 1
+            frames.append(tk.Frame(frame_one, relief='solid', borderwidth=2, bg="springgreen3"))
+            frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
+            if i == 5:
+                column_counter = -1
+        else:
+            column_counter += 1
+            frames.append(tk.Frame(frame_two, relief='solid', borderwidth=2, bg="springgreen3"))
+            frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
+    frame_count = -1
     for key in check_button:
-        count += 1
-        label = tk.Label(frames[count], text=key, font='bold', bg="springgreen3", width=15)
+        frame_count += 1
+        # Create a label for each frame, that is the current brackets title
+        label = tk.Label(frames[frame_count], text=key, width=15, font='bold', bg="springgreen3")
         label.grid(row=0, column=0)
-        for i in range(0, len(check_button[key][1][1])):
-            if check_button[key][1][1][i].get() == 1:
+        weight_class_checkers = check_button[key][1][1]
+        buttons = check_button[key][0]
+        weight_class_names = check_button[key][1][0]
+        # For each weight_class_checker create a corresponding check button
+        for i in range(len(weight_class_checkers)):
+            # If the check button was checked create a button for that weight class/bracket
+            if weight_class_checkers[i].get() == 1:
                 buttons.append(
-                    tk.Button(frames[count], background="springgreen3", width=8, activebackground="springgreen4", fg="white",
-                              text=check_button[key][1][0][i], font=('Serif-Sans 15 bold'),
-                              command=lambda screen_name="bracket", bracket_name=check_button[key][1][0][i],
-                                             button_num2=len(buttons): switch_screen(screen_name, bracket_name,
-                                                                                     button_num2)))
-                button_names.append(check_button[key][1][0][i])
+                    tk.Button(frames[frame_count], background="springgreen3", width=8, activebackground="springgreen4",
+                              fg="white",
+                              text=weight_class_names[i], font=('Serif-Sans 15 bold'),
+                              command=lambda screen_name="bracket", bracket_name=weight_class_names[i],
+                                             button_num_ref=len(buttons): switch_screen(screen_name, bracket_name,
+                                                                                     button_num_ref)))
                 buttons[len(buttons) - 1].grid(row=i + 1, column=0, pady=4)
-# Separator
-    frame2.columnconfigure(0, minsize=10, weight=0)
-    frame2.columnconfigure(1, minsize=10, weight=0)
-    frame2.columnconfigure(2, minsize=10, weight=0)
-    input_add = tk.StringVar()
-    add_input = tk.Entry(frame2, textvariable=input_add, width=15)
-    add_input.grid(row=0, column=0, pady=5)
-    count = -1
-    count2 = -1
-    frames2 = []
-    row_counter = 0
+
+# Begin making check box in this window
+    # Make columns for frame2
+    for i in range(3):
+        frame2.columnconfigure(i, minsize=10, weight=0)
+    # Create an entry field to take in the input of a competitor name to add to bracket
+    input_var = tk.StringVar()
+    competitor_entry = tk.Entry(frame2, textvariable=input_var, width=15)
+    competitor_entry.grid(row=0, column=0, pady=5)
+    frame_count = -1
+    frames = []
     for key in check_button:
-        count = -1
+        button_count = -1
         check_button[key][0].clear()
-        for i in range(len(check_button[key][1][2])):
-            if check_button[key][1][1][i].get() == 1:
-                if count == -1:
-                    frames2.append(tk.Frame(frame2, borderwidth=2, relief='solid'))
-                    frames2[len(frames2) - 1].grid(row=len(frames2) + 2, column=0, sticky='ns')
-                    label = tk.Label(frames2[count2], text=key, font='bold', bg="springgreen3")
+        weight_class_checkers = check_button[key][1][1]
+        weight_class_checkers_2 = check_button[key][1][2]
+        check_buttons = check_button[key][0]
+        weight_class_names = check_button[key][1][0]
+        for i in range(len(weight_class_checkers_2)):
+            if weight_class_checkers[i].get() == 1:
+                if button_count == -1:
+                    frames.append(tk.Frame(frame2, borderwidth=2, relief='solid'))
+                    frames[len(frames) - 1].grid(row=len(frames) + 1, column=0, sticky='ns')
+                    label = tk.Label(frames[frame_count], text=key, font='bold', bg="springgreen3")
                     label.grid(row=0, column=0)
-                    count2 += 1
-                count += 1
+                button_count += 1
+
+                # For each weight_class_checker create a corresponding check button
                 var = tk.IntVar()
-                check_button[key][0].append(
-                    tk.Checkbutton(frames2[count2], background="springgreen3", activebackground="springgreen4", text=button_names[count],
+                check_buttons.append(
+                    tk.Checkbutton(frames[frame_count], bg="springgreen3", font='Arial 10 bold', text=weight_class_names[i],
                                    variable=var,
                                    onvalue=1,
                                    offvalue=0,
-                                   height=2,
-                                   width=20))
-                check_button[key][1][2][i] = var
-                check_button[key][0][count].grid(row=count + 1, column=0)
+                                   height=1,
+                                   width=15))
+                weight_class_checkers_2[i] = var
+                check_buttons[button_count].grid(row=i + 1, column=0)
+                frame_count += 1
             else:
-                check_button[key][1][2][i] = tk.IntVar()
-    # frame2.rowconfigure(len(classes), minsize=20, weight=0)
+                weight_class_checkers_2[i] = tk.IntVar()
     submit = tk.Button(frame2, text="Submit",
-                       command=lambda name=input_add, checks=check_button: add_to_brackets(name,
-                                                                                                                  checks))
-    submit.grid(row=len(frames), column=0)
+                       command=lambda name=input_var: add_to_brackets(name))
+    print(len(frames))
+    submit.grid(row=len(frames) + 2, column=0)
+
 
 
 
