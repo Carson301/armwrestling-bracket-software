@@ -180,13 +180,13 @@ def add_competitor(bracket, competitor_name):
             messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
         else:
             # If all other checks satisfied begin checking for if the competitor is within the bracket already
-            copy = False
+            already_in_bracket = False
             # Go through each competitor and check
             for i in range(bracket.num_competitors):
                 if bracket.get_competitor_list()[i] == competitor_name.get().strip():
-                    copy = True
+                    already_in_bracket = True
             # The competitor does already exist in the bracket
-            if copy:
+            if already_in_bracket:
                 messagebox.showerror('Error', 'Error: Competitor is already in the ' + bracket.get_bracket_name() + ' bracket')
             # Competitor doesn't already exist in bracket
             # Add them to bracket
@@ -362,39 +362,52 @@ def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
     menu_string = string
     pressed = True
 
-def add_to_brackets(name, checks, button_nums1):
-    global brackets
-    global checkers
-    global buttons
-    global pressed
+def add_to_brackets(name, check_button_ref):
+    global brackets, pressed
+    # Index of button that references the current bracket
     button_count = -1
-    button_count2 = -1
     brackets_within = "Error: Competitor is already in the following brackets:\n"
     if name.get().strip() != "":
         if len(name.get().strip()) > 20:
             messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
         else:
-            copy = False
-            for key in checks:
-                for i in range(len(checks[key][1][1])):
-                    if checks[key][1][1][i].get() == 1:
+            # Boolean to check if competitor is already in the bracket
+            already_in_bracket = False
+            # For each weight class/bracket
+            for key in check_button_ref:
+                # Checkers for the weight classes for both checkbox areas of the program
+                weight_class_checkers = check_button[key][1][1]
+                weight_class_checkers_2 = check_button_ref[key][1][2]
+                for i in range(len(weight_class_checkers)):
+                    # Increment button count if the box was checked with the first checkboxes
+                    if weight_class_checkers[i].get() == 1:
                         button_count += 1
-                    if checks[key][1][2][i].get() == 1:
-                        print(button_count)
-                        for j in range(brackets.get_tournament()[button_nums1[button_count]].num_competitors):
-                            if brackets.get_tournament()[button_nums1[button_count]].get_competitor_list()[j] == name.get().strip():
-                                copy = True
-                                brackets_within += brackets.get_tournament()[button_nums1[button_count]].get_bracket_name() + "\n"
-            if copy == True:
+                    # Add the competitor to the bracket if the box was checked
+                    if weight_class_checkers_2[i].get() == 1:
+                        current_bracket = brackets.get_tournament()[button_count]
+                        for j in range(current_bracket.num_competitors):
+                            # If the competitor is already in the bracket set boolean and add the name of the bracket
+                            # to the brackets_within string
+                            if current_bracket.get_competitor_list()[j] == name.get().strip():
+                                already_in_bracket = True
+                                brackets_within += current_bracket.get_bracket_name() + "\n"
+            # Show the user what brackets the competitor is already in
+            if already_in_bracket:
                 messagebox.showerror('Error', brackets_within)
+            # If no other errors
             else:
-                for key in checks:
-                    for j in range(len(checks[key][1][1])):
-                        if checks[key][1][1][j].get() == 1:
-                            button_count2 += 1
-                        if checks[key][1][2][j].get() == 1:
-                            brackets.get_tournament()[button_nums1[button_count2]].add_competitor(name.get().strip())
-                            brackets.get_tournament()[button_nums1[button_count2]].begin_bracket()
+                button_count = -1
+                for key in check_button_ref:
+                    # Checkers for the weight classes for both checkbox areas of the program
+                    weight_class_checkers = check_button[key][1][1]
+                    weight_class_checkers_2 = check_button_ref[key][1][2]
+                    for j in range(len(weight_class_checkers)):
+                        if weight_class_checkers[j].get() == 1:
+                            button_count += 1
+                        if weight_class_checkers_2[j].get() == 1:
+                            current_bracket = brackets.get_tournament()[button_count]
+                            current_bracket.add_competitor(name.get().strip())
+                            current_bracket.begin_bracket()
                             pressed = True
     else:
         messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
@@ -408,8 +421,6 @@ def draw_brackets_window(frame1):
     global frame2
     global check_button
     global check_button2
-
-    button_nums = []
     button_names = []
     frames = []
     frame = tk.Frame(frame1, relief='solid', borderwidth=2)
@@ -455,9 +466,7 @@ def draw_brackets_window(frame1):
                                              button_num2=len(buttons): switch_screen(screen_name, bracket_name,
                                                                                      button_num2)))
                 button_names.append(check_button[key][1][0][i])
-                button_nums.append(len(buttons) - 1)
                 buttons[len(buttons) - 1].grid(row=i + 1, column=0, pady=4)
-    print(button_nums)
 # Separator
     frame2.columnconfigure(0, minsize=10, weight=0)
     frame2.columnconfigure(1, minsize=10, weight=0)
@@ -495,9 +504,8 @@ def draw_brackets_window(frame1):
                 check_button[key][1][2][i] = tk.IntVar()
     # frame2.rowconfigure(len(classes), minsize=20, weight=0)
     submit = tk.Button(frame2, text="Submit",
-                       command=lambda name=input_add, checks=check_button, button_nums1=button_nums: add_to_brackets(name,
-                                                                                                                  checks,
-                                                                                                                  button_nums1))
+                       command=lambda name=input_add, checks=check_button: add_to_brackets(name,
+                                                                                                                  checks))
     submit.grid(row=len(frames), column=0)
     # for i in range(len(buttons)):
     #     var = tk.IntVar()
