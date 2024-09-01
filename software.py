@@ -286,6 +286,7 @@ def draw_bracket_window(bracket, frame):
 
         for i in range(len(levels) - 2):  # Create bracket in tkinter window using buttons and labels
             level = levels[i]
+
             for j in range(len(level)):
                 if level[j].get_value() != -1:
                     # Separates the top half of nodes from the bottom, top=winner and loser=bottom
