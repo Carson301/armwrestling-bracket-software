@@ -413,14 +413,8 @@ def add_to_brackets(name, check_button_ref):
         messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
 
 
-
-
-
 def draw_brackets_window(frame1):
-    global buttons
-    global frame2
-    global check_button
-    global check_button2
+    global buttons, frame2, check_button
     button_names = []
     frames = []
     frame = tk.Frame(frame1, relief='solid', borderwidth=2)
@@ -507,82 +501,59 @@ def draw_brackets_window(frame1):
                        command=lambda name=input_add, checks=check_button: add_to_brackets(name,
                                                                                                                   checks))
     submit.grid(row=len(frames), column=0)
-    # for i in range(len(buttons)):
-    #     var = tk.IntVar()
-    #     check_button.append(tk.Checkbutton(frame2, background="springgreen3", activebackground="springgreen4", text=button_names[i], variable=var,
-    #             onvalue=1,
-    #             offvalue=0,
-    #             height=2,
-    #             width=20))
-    #     checkers2.append([var, classes[i]])
-    # frame2.configure(bg="springgreen3")
-    # row_counter = 0
-    # prev_button = "NA"
-    # for i in range(len(check_buttons2)):
-    #     if button_names[i][:-1] == prev_button[:-1]:
-    #         col_counter = 1
-    #     else:
-    #         frame2.rowconfigure(i, minsize=50, weight=0)
-    #         row_counter += 1
-    #         if "L" in button_names[i]:
-    #             col_counter = 1
-    #         else:
-    #             col_counter = 0
-    #     check_buttons2[i].grid(row=row_counter, column=col_counter, padx=5, pady=5)
-    #     prev_button = button_names[i]
-    #
 
 
 
-def draw_menu_window(frame1):
+def draw_menu_window(frame):
     global check_button
     frames = []
-    frame = tk.Frame(frame1, relief='solid', borderwidth=2)
-    frame3 = tk.Frame(frame1, relief='solid', borderwidth=2)
-    frame.grid(row=0, column=0)
-    frame3.grid(row=1, column=0)
+    # Create two frames to break up the window
+    frame_one = tk.Frame(frame, relief='solid', borderwidth=2)
+    frame_two = tk.Frame(frame, relief='solid', borderwidth=2)
+    frame_one.grid(row=0, column=0)
+    frame_two.grid(row=1, column=0)
     row_counter = 0
     column_counter = -1
-    frame.columnconfigure(0, minsize=10, weight=0)
-    frame.columnconfigure(1, minsize=10, weight=0)
-    frame.columnconfigure(2, minsize=10, weight=0)
-    frame.columnconfigure(3, minsize=10, weight=0)
-    frame.columnconfigure(4, minsize=10, weight=0)
-    frame.columnconfigure(5, minsize=10, weight=0)
-    frame.rowconfigure(0, minsize=10, weight=0)
-    frame3.columnconfigure(0, minsize=10, weight=0)
-    frame3.columnconfigure(1, minsize=10, weight=0)
-    frame3.columnconfigure(2, minsize=10, weight=0)
-    frame3.columnconfigure(3, minsize=10, weight=0)
-    frame3.columnconfigure(4, minsize=10, weight=0)
-    frame3.columnconfigure(5, minsize=10, weight=0)
-    frame3.rowconfigure(0, minsize=10, weight=0)
+    # Create columns and rows for those frames
     for i in range(6):
-        column_counter += 1
-        frames.append(tk.Frame(frame, relief='solid', borderwidth=2, bg="springgreen3"))
-        frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
-    column_counter = -1
-    for i in range(6, 12):
-        column_counter += 1
-        frames.append(tk.Frame(frame3, relief='solid', borderwidth=2, bg="springgreen3"))
-        frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
+        frame_one.columnconfigure(i, minsize=10, weight=0)
+        frame_two.columnconfigure(i, minsize=10, weight=0)
+    frame_one.rowconfigure(0, minsize=10, weight=0)
+    frame_two.rowconfigure(0, minsize=10, weight=0)
+    # Create 6 frames within each of the frames above to separate out the window even more
+    for i in range(12):
+        if i < 6:
+            column_counter += 1
+            frames.append(tk.Frame(frame_one, relief='solid', borderwidth=2, bg="springgreen3"))
+            frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
+            if i == 5:
+                column_counter = -1
+        else:
+            column_counter += 1
+            frames.append(tk.Frame(frame_two, relief='solid', borderwidth=2, bg="springgreen3"))
+            frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
 
     count = -1
     for key in check_button:
         count += 1
+        # Create a label for each frame, that is the current brackets title
         label = tk.Label(frames[count], text=key, font='bold', bg="springgreen3")
         label.grid(row=0, column=0)
-        for i in range(0, len(check_button[key][1][0])):
+        weight_class_checkers = check_button[key][1][1]
+        check_buttons = check_button[key][0]
+        weight_class_names = check_button[key][1][0]
+        # For each weight_class_checker create a corresponding check button
+        for i in range(len(weight_class_checkers)):
             var = tk.IntVar()
-            check_button[key][0].append(tk.Checkbutton(frames[count], bg="springgreen3", font='Arial 10 bold', text=check_button[key][1][0][i], variable=var,
+            check_buttons.append(tk.Checkbutton(frames[count], bg="springgreen3", font='Arial 10 bold', text=weight_class_names[i], variable=var,
                                                 onvalue=1,
                                                 offvalue=0,
                                                 height=1,
                                                 width=15))
-            check_button[key][1][1][i] = var
-            check_button[key][0][i].grid(row=i + 1, column=0)
-
-    submit = tk.Button(frame1, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
+            weight_class_checkers[i] = var
+            check_buttons[i].grid(row=i + 1, column=0)
+    # Create a button for submitting the check buttons
+    submit = tk.Button(frame, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
     submit.grid(row=2, column=0)
 
 def draw_main_window(frame):
