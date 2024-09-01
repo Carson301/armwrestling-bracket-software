@@ -54,23 +54,27 @@ check_button = {"Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "1
                 }
 
 def main():
-    global root
-    global start_frame
+    # Create a window that takes up the whole screen
     root.state("zoomed")
     root.resizable(False, False)
-    root.title("Arm Wrestling Tournament")  # Gives the window a title
+    # Gives the window a title
+    root.title("Arm Wrestling Tournament")
+    # Pack the start_frame into the root
     start_frame.pack(fill="both", expand=True)
-    title_label = tk.Label(start_frame, text=title, font=('Impact', 10), fg="white")  # Gives another title for the window, but inside the window
+    # Create and pack a title label for the current screen into the start_frame
+    title_label = tk.Label(start_frame, text=title, font=('Impact', 10), fg="white")
     title_label.pack(padx=1, pady=1)
+    # Pack the buttons_frame into the start_frame
     buttons_frame.pack()
 
+    # If the window is closed call on_closing to finish up the program
+    root.protocol("WM_DELETE_WINDOW", on_closing)
 
-    root.protocol("WM_DELETE_WINDOW", on_closing)  # Calls on_closing when window is closed
+    # Update window periodically
+    updates()
 
-    updates()  # Update window periodically
-
-
-    root.mainloop()  # Keep window open
+    # Keep window open
+    root.mainloop()
 
 def reset_start_frame():
     global start_frame
