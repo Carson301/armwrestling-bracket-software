@@ -349,7 +349,8 @@ def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
     if string == "pick":
         prev_menu_string = "main"
     if string == "brackets":
-        create_tournament()
+        if menu_string != "bracket":
+            create_tournament()
         title = "Arm Wrestling Tournament"
         brackets_button_num = 0
         prev_menu_string = "pick"
