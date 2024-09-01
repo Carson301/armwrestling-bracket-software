@@ -8,7 +8,37 @@ import DoubleBracket
 import Tournament
 from tkinter import messagebox
 
+# Title for current screen
 title = "Arm Wrestling Tournament"
+
+# The root of the window
+root = tk.Tk()
+
+# A frame to place all other widgets within
+start_frame = tk.Frame(root, bg="white")
+# A frame for buttons at the top of the screen
+buttons_frame = tk.Frame(start_frame, bg="red")
+# A frame for all adding to brackets widgets
+frame2 = tk.Frame(start_frame, bg="red")
+
+
+# Menu strings used to know what screen the program is currently on
+menu_string = "main"
+prev_menu_string = "main"
+
+# The tournament
+brackets = Tournament.Tournament()
+# Buttons and lines for the brackets
+buttons = []
+lines = []
+
+# Whether a button has been pressed
+pressed = True
+# To know which button was pressed
+button_num = 0
+
+
+# A dictionary full of information about the tournament and the check buttons used within the program
 check_button = {"Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]],
                 "Semi-Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "187-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]],
                 "Amateur Right": [[], [["0-154", "176-198", "199-220", "221-240", "241+"], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]],
@@ -22,23 +52,6 @@ check_button = {"Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "1
                 "Master Left": [[], [["0-198", "199+"], [0, 0], [0, 0]]],
                 "Women Left": [[], [["0-143", "144+"], [0, 0], [0, 0]]],
                 }
-prev_menu_string = "main"
-pressed = True
-check_buttons = []
-check_button2 = []
-classes = ["0-154 R", "0-154 L", "155-176 R", "155-176 L", "177-198 R", "177-198 L", "199-220 R", "199-220 L", "221-240 R", "221-240 L", "241+ R", "241+ L"]
-brackets = Tournament.Tournament()
-checkers = []
-checkers2 = []
-buttons = []
-lines = []
-button_num = 0
-menu_string = "main"
-root = tk.Tk()
-start_frame = tk.Frame(root, bg="white")
-buttons_frame = tk.Frame(start_frame, bg="red")
-frame2 = tk.Frame(start_frame, bg="red")
-
 
 def main():
     global root
