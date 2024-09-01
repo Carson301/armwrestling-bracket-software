@@ -197,76 +197,81 @@ def add_competitor(bracket, competitor_name):
 
 
 def draw_bracket_window(bracket, frame):
-    global buttons
-    global lines
-    global start_frame
-    global buttons_frame
-    level_counter1 = 0
-    entry_counter = 2
-    node_counter = 0
-    entry_multiplier = 2
+    global buttons, lines, start_frame, buttons_frame
+    # Variables that keep track of where nodes of a bracket should be places in the frame grid
+    winner_lvl_count = 0
+    winner_entry_count = 2
+    node_count = 0
+    winner_entry_mult = 2
     levels = bracket.get_level_list()
+    # If the bracket being drawn is of the form SingleBracket
     if isinstance(bracket, SingleBracket.SingleBracket):
-        # Create rows and columns based on bracket size
-        if bracket.get_num_competitors() > 1:
+        # Create an entry field to take in the input of a competitor name to add to bracket
+        input_var = tk.StringVar()
+        competitor_entry = tk.Entry(frame2, textvariable=input_var, width=15)
+        # Create an add button to add the competitor to the bracket
+        add_button = tk.Button(frame2, background="springgreen3", activebackground="springgreen4", fg="black",
+                             text="Add", font=('Sans-Serif 8 bold'),
+                             command=lambda bracket_ref=bracket, competitor_ref=input_var: add_competitor(bracket_ref, competitor_ref))
+        add_button.grid(row=0, column=1, sticky='w', pady=5, padx=5)
+        competitor_entry.grid(row=0, column=0, pady=5)
+
+        # Variable to keep track of current row in frame2
+        row_count = 2
+        # Label for competitor list of bracket
+        tk.Label(frame2, text="Competitor List", font='sans-serif 10', bg="seashell4").grid(row=1, column=0,                                                                                columnspan=2, sticky='ew')
+        # For each competitor
+        for entry in bracket.get_competitor_list():
+            # Create both a label and a button that may be pressed to remove the competitor from the bracket
+            competitor_label = tk.Label(frame2, text=entry, bg="seashell3")
+            competitor_label.grid(row=row_count, column=0)
+            remove_button = tk.Button(frame2, text="X", bg="red", font='Arial 5',
+                      command=lambda comp1=entry: del_competitor(bracket, comp1))
+            remove_button.grid(row=row_count, column=1)
+            row_count += 1
+
+        # If the bracket doesn't have enough competitors
+        if bracket.get_num_competitors() < 2:
+            tk.Label(frame, text='Attention! Bracket Requires at least 2 competitors before it is drawn.', font='20', bg='yellow').grid(row=2, column=0, sticky="e")
+        # Once the bracket does have at least 2 competitors
+        else:
+            # Create enough rows and columns for the grid
             for i in range(int(bracket.get_num_nodes())):
                 if i < bracket.get_num_levels() + 1:
                     frame.columnconfigure(i, minsize=150, weight=0)
                 frame.rowconfigure(i, minsize=25, weight=0)
-        input_add = tk.StringVar()
-        add_input = tk.Entry(frame2, textvariable=input_add, width=15)
-        add_comp = tk.Button(frame2, background="springgreen3", activebackground="springgreen4", fg="black",
-                                     text="Add", font=('Sans-Serif 8 bold'),
-                                     command=lambda bracket1=bracket, comp=input_add: add_competitor(bracket1, comp))
-
-        add_comp.grid(row=0, column=1, sticky='w', pady=5, padx=5)
-        add_input.grid(row=0, column=0, pady=5)
-
-        if bracket.get_num_competitors() < 2:
-            tk.Label(frame, text='Attention! Bracket Requires at least 2 competitors before it is drawn.', font='20', bg='yellow').grid(row=2, column=0, sticky="e")
-        else:
-            for level in levels:  # Create bracket in tkinter window using buttons and labels
-
+            # For each level in the bracket. A Level being the columns of the bracket
+            for level in levels:
                 for i in range(len(level)):
+                    # Only draw nodes that have valid values
+                    # -1 means don't draw this entry as it is not needed
                     if level[i].get_value() != -1:
                         # Create a button that represents a node in the bracket, append it to a list that stores buttons
-
-
-                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[i].get_value(), font=('Sans-Serif 8 bold'), command=lambda node_counter1=node_counter: match_result(node_counter1, bracket)))
-
-                        # Place the button that was just created in the tkinter grid
-                        buttons[len(buttons) - 1].grid(row=entry_counter, column=level_counter1, sticky=tk.W + tk.E, pady=0, padx=5)
+                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[i].get_value(), font=('Sans-Serif 8 bold'), command=lambda node_count_ref=node_count: match_result(node_count_ref, bracket)))
+                        buttons[len(buttons) - 1].grid(row=winner_entry_count, column=winner_lvl_count, sticky=tk.W + tk.E, pady=0, padx=5)
 
                         # If statement to draw lines connecting buttons properly
                         if i % 2 != 0 and bracket.find_index(level[i]) != bracket.get_num_nodes() - 1:
 
                             # Create the canvas to draw lines onto
-                            lines.append(tk.Canvas(frame, highlightthickness=0, width=150, height=int(buttons[0].winfo_reqheight()) * (entry_multiplier - 1), bg="Azure"))
-
-                            # Place the canvas into the tkinter grid
-                            lines[len(lines) - 1].grid(row=entry_counter - entry_multiplier + 1, rowspan=entry_multiplier - 1, column=level_counter1)
+                            lines.append(tk.Canvas(frame, highlightthickness=0, width=150, height=int(buttons[0].winfo_reqheight()) * (winner_entry_mult - 1), bg="Azure"))
+                            lines[len(lines) - 1].grid(row=winner_entry_count - winner_entry_mult + 1, rowspan=winner_entry_mult - 1, column=winner_lvl_count)
 
                             # Draw two lines on the canvas to show that two nodes point to another
-                            lines[len(lines) - 1].create_line(125, 0, 125, int(buttons[0].winfo_reqheight()) * (entry_multiplier - 1), width=5)
+                            lines[len(lines) - 1].create_line(125, 0, 125, int(buttons[0].winfo_reqheight()) * (winner_entry_mult - 1), width=5)
                             lines[len(lines) - 1].create_line(125, lines[len(lines) - 1].winfo_reqheight() // 2, 150, lines[len(lines) - 1].winfo_reqheight() // 2, width=5)
 
                     # The following lines are variables that keep the bracket spaced properly
-                    entry_counter += entry_multiplier
-                    node_counter += 1
-                entry_counter = 1 + entry_multiplier
-                entry_multiplier *= 2
-                level_counter1 += 1
-        count = 2
-        tk.Label(frame2, text="Competitor List", font='sans-serif 10', bg="seashell4").grid(row=1, column=0, columnspan=2, sticky='ew')
-        for entry in bracket.get_competitor_list():
-            tk.Label(frame2, text=entry, bg="seashell3").grid(row=count, column=0)
-            tk.Button(frame2, text="X", bg="red", font='Arial 5', command=lambda comp1=entry: del_competitor(bracket, comp1)).grid(row=count, column=1)
-            count += 1
+                    winner_entry_count += winner_entry_mult
+                    node_count += 1
+                winner_entry_count = 1 + winner_entry_mult
+                winner_entry_mult *= 2
+                winner_lvl_count += 1
     if isinstance(bracket, DoubleBracket.DoubleBracket):
         # Separate level counter for losers bracket
         level_counter2 = bracket.get_num_levels() - 1
         # Double bracket has different starting entry counter, to allow room for finals at the top
-        entry_counter = 6
+        winner_entry_count = 6
         entry_counter2 = 6
         entry_multiplier2 = 2
         count = 0
@@ -284,25 +289,25 @@ def draw_bracket_window(bracket, frame):
                     # Separates the top half of nodes from the bottom, top=winner and loser=bottom
                     if j < int(len(level) / 4):
                         # Create a button that represents a node in the bracket, append it to a list that stores buttons
-                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[j].get_value(), font=('Sans-Serif 8 bold'), command=lambda node_counter1=node_counter: match_result(node_counter1, bracket)))
+                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[j].get_value(), font=('Sans-Serif 8 bold'), command=lambda node_count_ref=node_count: match_result(node_count_ref, bracket)))
 
                         # Place the button that was just created in the tkinter grid
-                        buttons[len(buttons) - 1].grid(row=entry_counter, column=level_counter1, sticky=tk.W + tk.E, pady=0, padx=5)
+                        buttons[len(buttons) - 1].grid(row=winner_entry_count, column=winner_lvl_count, sticky=tk.W + tk.E, pady=0, padx=5)
 
                         # If statement to draw lines connecting buttons properly
                         if (i + count) % 2 == 0 and bracket.find_index(level[j]) != bracket.get_num_nodes() - 1:
                             # Create the canvas to draw lines onto
-                            lines.append(tk.Canvas(frame, highlightthickness=0, width=150, height=int(buttons[0].winfo_reqheight()) * (entry_multiplier - 1), bg="Azure"))
+                            lines.append(tk.Canvas(frame, highlightthickness=0, width=150, height=int(buttons[0].winfo_reqheight()) * (winner_entry_mult - 1), bg="Azure"))
 
                             # Place the canvas into the tkinter grid
-                            lines[len(lines) - 1].grid(row=entry_counter - entry_multiplier + 1, rowspan=entry_multiplier - 1, column=level_counter1)
+                            lines[len(lines) - 1].grid(row=winner_entry_count - winner_entry_mult + 1, rowspan=winner_entry_mult - 1, column=winner_lvl_count)
 
                             # Draw two lines on the canvas to show that two nodes point to another
-                            lines[len(lines) - 1].create_line(125, 0, 125, int(buttons[0].winfo_reqheight()) * (entry_multiplier - 1), width=5)
+                            lines[len(lines) - 1].create_line(125, 0, 125, int(buttons[0].winfo_reqheight()) * (winner_entry_mult - 1), width=5)
                             lines[len(lines) - 1].create_line(125, lines[len(lines) - 1].winfo_reqheight() // 2, 150, lines[len(lines) - 1].winfo_reqheight() // 2, width=5)
                         count += 1
                     else:
-                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[j].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=node_counter: match_result(node_counter1, bracket)))
+                        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="black", text=level[j].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_count_ref=node_count: match_result(node_count_ref, bracket)))
                         buttons[len(buttons) - 1].grid(row=entry_counter2, column=level_counter2, sticky=tk.W + tk.E, padx=5, pady=0)
                         if (i + count) % 2 == 0 and level[j].get_value() != -1 and bracket.find_index(level[j]) < bracket.get_num_nodes() - 6:
                             lines.append(tk.Canvas(frame, width=150, height=int(buttons[0].winfo_reqheight()) * (entry_multiplier2 - 1), bg="Azure", highlightthickness=0))
@@ -311,25 +316,25 @@ def draw_bracket_window(bracket, frame):
                             lines[len(lines) - 1].create_line(25, int(lines[len(lines) - 1].winfo_reqheight()) // 2, 0, int(lines[len(lines) - 1].winfo_reqheight()) // 2, width=5)
                         count += 1
                 if j < int(len(level) / 4):
-                    entry_counter += entry_multiplier
+                    winner_entry_count += winner_entry_mult
                 else:
                     entry_counter2 += entry_multiplier2
-                node_counter += 1
-            entry_counter = 5 + entry_multiplier
-            entry_multiplier *= 2
+                node_count += 1
+            winner_entry_count = 5 + winner_entry_mult
+            winner_entry_mult *= 2
             entry_counter2 = 5 + entry_multiplier2
             entry_multiplier2 *= 2
-            level_counter1 += 1
+            winner_lvl_count += 1
             level_counter2 -= 1
 
         # Add the finals buttons
-        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 2][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 3: match_result(node_counter1, bracket)))
+        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 2][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_count_ref=bracket.get_num_nodes() - 3: match_result(node_count_ref, bracket)))
         buttons[len(buttons) - 1].grid(row=4, column=int(bracket.get_num_levels() / 2) - 1, sticky=tk.W + tk.E, padx=5, pady=0)
 
-        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 2][1].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 2: match_result(node_counter1, bracket)))
+        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 2][1].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_count_ref=bracket.get_num_nodes() - 2: match_result(node_count_ref, bracket)))
         buttons[len(buttons) - 1].grid(row=4, column=int(bracket.get_num_levels() / 2) + 1, sticky=tk.W + tk.E, padx=5, pady=0)
 
-        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 1][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_counter1=bracket.get_num_nodes() - 1: match_result(node_counter1, bracket)))
+        buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 1][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_count_ref=bracket.get_num_nodes() - 1: match_result(node_count_ref, bracket)))
         buttons[len(buttons) - 1].grid(row=2, column=int(bracket.get_num_levels() / 2), sticky=tk.W + tk.E, padx=5, pady=0)
 
 def switch_screen(string, bracket_name=None, button_num2=None):
