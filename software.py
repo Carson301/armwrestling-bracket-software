@@ -8,9 +8,6 @@ import DoubleBracket
 import Tournament
 from tkinter import messagebox
 
-# Title for current screen
-title = "Arm Wrestling Tournament"
-
 # The root of the window
 root = tk.Tk()
 
@@ -21,6 +18,10 @@ buttons_frame = tk.Frame(start_frame, bg="red")
 # A frame for all adding to brackets widgets
 frame2 = tk.Frame(start_frame, bg="red")
 
+# Title for current screen
+title = "Arm Wrestling Tournament"
+# Create a title_label for the current screen
+title_label = tk.Label(start_frame, text=title, font=('Impact', 10), fg="white")
 
 # Menu strings used to know what screen the program is currently on
 menu_string = "main"
@@ -54,6 +55,7 @@ check_button = {"Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "1
                 }
 
 def main():
+    global root, start_frame, title_label, buttons_frame
     # Create a window that takes up the whole screen
     root.state("zoomed")
     root.resizable(False, False)
@@ -61,8 +63,7 @@ def main():
     root.title("Arm Wrestling Tournament")
     # Pack the start_frame into the root
     start_frame.pack(fill="both", expand=True)
-    # Create and pack a title label for the current screen into the start_frame
-    title_label = tk.Label(start_frame, text=title, font=('Impact', 10), fg="white")
+    # Pack the title label for the current screen into the start_frame
     title_label.pack(padx=1, pady=1)
     # Pack the buttons_frame into the start_frame
     buttons_frame.pack()
@@ -77,32 +78,31 @@ def main():
     root.mainloop()
 
 def reset_start_frame():
-    global start_frame
-    global buttons_frame
-    global prev_menu_string
-    global frame2
+    global start_frame, buttons_frame, frame2, prev_menu_string
+    # The screen needs to be reset
+    # So destroy all current widgets of the start_frame
     for widgets in start_frame.winfo_children():
         widgets.destroy()
+    # Create and repack all important widgets that were destroyed
     start_frame.pack(fill="both", expand=True)
+    start_frame.configure(bg="SpringGreen4")
     title_label = tk.Label(start_frame, text=title, font=('Impact', 10),
-                           fg="white")  # Gives another title for the window, but inside the window
+                           fg="white")
     title_label.pack(padx=1, pady=1)
+    title_label.configure(bg="SpringGreen4", pady=5)
     buttons_frame = tk.Frame(start_frame, bg="Azure")
     buttons_frame.pack(fill="both")
     frame2 = tk.Frame(start_frame, bg="seashell3")
-    if menu_string == "bracket":
+    # Only pack frame2 on these screens
+    if menu_string == "bracket" or menu_string == "brackets":
         frame2.pack(fill="y", side="right")
         frame2.configure(borderwidth=3, relief="solid")
-    if menu_string == "brackets":
-        frame2.pack(fill="y", side="right")
-        frame2.configure(borderwidth=3, relief="solid")
+    # All screens except main should have a go back button
     if menu_string != "main":
         go_back = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
                             text="Back", font=('Sans-Serif 8 bold'),
                             command=lambda menu=prev_menu_string: switch_screen(menu))
         go_back.grid(row=0, column=0)
-    start_frame.configure(bg="SpringGreen4")
-    title_label.configure(bg="SpringGreen4", pady=5)
 
 def create_tournament():
     global brackets
