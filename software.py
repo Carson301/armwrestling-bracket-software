@@ -568,6 +568,7 @@ def draw_menu_window(frame):
 
 def draw_main_window(frame):
     global buttons
+    # Create 3 buttons for main window
     tk.Button(frame, bg='springgreen3', text="Start", font=('Impact', 25), width=25, command=lambda screen_name="pick": switch_screen(screen_name)).grid(row=0, column=0, pady=10)
     tk.Button(frame, bg='springgreen3', text="Options", font=('Impact', 25), width=25, command=lambda screen_name="options": switch_screen(screen_name)).grid(row=1, column=0, pady=10)
     tk.Button(frame, bg='springgreen3', text="Help", font=('Impact', 25), width=25, command=lambda screen_name="help": switch_screen(screen_name)).grid(row=2, column=0, pady=10)
@@ -575,43 +576,32 @@ def draw_main_window(frame):
 
 
 def updates():
-    global buttons
-    global check_buttons
-    global checkers
-    global check_buttons2
-    global checkers2
-    global lines
-    global pressed
-    global start_frame
-    global node_button_num
-    global brackets_button_num
-    global menu_string
+    global buttons, lines, pressed, start_frame, node_button_num, brackets_button_num, menu_string
     if pressed:
         reset_start_frame()
+        frame = draw_scrollbar()
         if menu_string == "main":
-            frame = draw_scrollbar()
             draw_main_window(frame)
         if menu_string == "pick":
+            # Reset check_button
             for key in check_button:
                 check_button[key][0].clear()
                 for var in check_button[key][1][1]:
                     var = 0
-            frame = draw_scrollbar()
             draw_menu_window(frame)
         if menu_string == "bracket":
-            frame = draw_scrollbar()
-            buttons.clear()  # Reset button list
+            # Reset buttons and lines
+            buttons.clear()
             lines.clear()
-            print(brackets_button_num)
             draw_bracket_window(brackets.get_tournament()[brackets_button_num], frame)
         if menu_string == "brackets":
+            # Reset check_button
             for key in check_button:
                 check_button[key][0].clear()
                 for var in check_button[key][1][1]:
                     var = 0
-            frame = draw_scrollbar()
-            lines.clear()
-            buttons.clear()  # Reset button list
+            # Reset buttons
+            buttons.clear()
             draw_brackets_window(frame)
         pressed = False
 
@@ -619,8 +609,7 @@ def updates():
 
 
 def match_result(entry, bracket):
-    global pressed
-    global node_button_num
+    global pressed, node_button_num
     node_button_num = entry
     if node_button_num < bracket.get_num_nodes() - 1 and bracket.check_if_pair(
             node_button_num):  # Call bracket functions to produce a result to a match given the button pressed
