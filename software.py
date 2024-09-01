@@ -169,21 +169,28 @@ def del_competitor(bracket, competitor_name):
     bracket.begin_bracket()
     pressed = True
 
-def add_competitor(bracket1, comp):
+def add_competitor(bracket, competitor_name):
     global pressed
-    if comp.get().strip() != "":
-        if len(comp.get().strip()) > 20:
+    # Make sure competitor name isn't nothing
+    if competitor_name.get().strip() != "":
+        # Make sure competitor name is shorter than 20 characters
+        if len(competitor_name.get().strip()) > 20:
             messagebox.showerror('Error', 'Error: Competitor name cannot be longer than 20 characters')
         else:
+            # If all other checks satisfied begin checking for if the competitor is within the bracket already
             copy = False
-            for i in range(bracket1.num_competitors):
-                if bracket1.get_competitor_list()[i] == comp.get().strip():
+            # Go through each competitor and check
+            for i in range(bracket.num_competitors):
+                if bracket.get_competitor_list()[i] == competitor_name.get().strip():
                     copy = True
+            # The competitor does already exist in the bracket
             if copy:
-                messagebox.showerror('Error', 'Error: Competitor is already in bracket')
+                messagebox.showerror('Error', 'Error: Competitor is already in the ' + bracket.get_bracket_name() + ' bracket')
+            # Competitor doesn't already exist in bracket
+            # Add them to bracket
             else:
-                bracket1.add_competitor(comp.get().strip())
-                bracket1.begin_bracket()
+                bracket.add_competitor(competitor_name.get().strip())
+                bracket.begin_bracket()
                 pressed = True
     else:
         messagebox.showerror('Error', 'Error: Competitor name cannot be nothing')
