@@ -161,10 +161,12 @@ def set_scrollregion(event):
     global canvas
     canvas.configure(scrollregion=canvas.bbox('all'))
 
-def del_competitor(bracket1, comp):
+def del_competitor(bracket, competitor_name):
     global pressed
-    bracket1.del_competitor(comp)
-    bracket1.begin_bracket()
+    # Call bracket method to delete competitor from bracket
+    bracket.del_competitor(competitor_name)
+    # Begin bracket again
+    bracket.begin_bracket()
     pressed = True
 
 def add_competitor(bracket1, comp):
