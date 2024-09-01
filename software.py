@@ -58,6 +58,7 @@ check_button = {"Pro Right": [[], [["0-154", "154-165", "166-176", "176-187", "1
                 "Women Left": [[], [["0-143", "144+"], [0, 0], [0, 0]]],
                 }
 
+
 def main():
     global root, start_frame, title_label, buttons_frame
     # Create a window that takes up the whole screen
@@ -80,6 +81,7 @@ def main():
 
     # Keep window open
     root.mainloop()
+
 
 def reset_start_frame():
     global start_frame, buttons_frame, frame2, prev_menu_string, title_label
@@ -108,6 +110,7 @@ def reset_start_frame():
                             command=lambda menu=prev_menu_string: switch_screen(menu))
         go_back.grid(row=0, column=0)
 
+
 def create_tournament():
     global brackets, check_button
     # Create a tournament object
@@ -124,6 +127,7 @@ def create_tournament():
                 bracket = SingleBracket.SingleBracket([], weight_classes[i])
                 bracket.begin_bracket()
                 brackets.get_tournament().append(bracket)
+
 
 def draw_scrollbar():
     global canvas, start_frame, menu_string
@@ -159,9 +163,11 @@ def draw_scrollbar():
 
     return frame
 
+
 def set_scrollregion(event):
     global canvas
     canvas.configure(scrollregion=canvas.bbox('all'))
+
 
 def del_competitor(bracket, competitor_name):
     global pressed
@@ -170,6 +176,7 @@ def del_competitor(bracket, competitor_name):
     # Begin bracket again
     bracket.begin_bracket()
     pressed = True
+
 
 def add_competitor(bracket, competitor_name):
     print(bracket.get_bracket_name())
@@ -341,6 +348,7 @@ def draw_bracket_window(bracket, frame):
         buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 1][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_count_ref=bracket.get_num_nodes() - 1: match_result(node_count_ref, bracket)))
         buttons[len(buttons) - 1].grid(row=2, column=int(bracket.get_num_levels() / 2), sticky=tk.W + tk.E, padx=5, pady=0)
 
+
 def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
     print(brackets_button_num_ref)
     global menu_string, brackets_button_num, pressed, title, prev_menu_string
@@ -363,6 +371,7 @@ def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
     # Set menu_string to the new screen name
     menu_string = string
     pressed = True
+
 
 def add_to_brackets(name):
     global brackets, pressed, check_button
@@ -467,6 +476,7 @@ def draw_brackets_window(frame):
                 buttons[len(buttons) - 1].grid(row=i + 1, column=0, pady=4)
 
 # Begin making check box in this window
+
     # Make columns for frame2
     for i in range(3):
         frame2.columnconfigure(i, minsize=10, weight=0)
@@ -510,8 +520,6 @@ def draw_brackets_window(frame):
                        command=lambda name=input_var: add_to_brackets(name))
     print(len(frames))
     submit.grid(row=len(frames) + 2, column=0)
-
-
 
 
 def draw_menu_window(frame):
@@ -566,13 +574,13 @@ def draw_menu_window(frame):
     submit = tk.Button(frame, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
     submit.grid(row=2, column=0)
 
+
 def draw_main_window(frame):
     global buttons
     # Create 3 buttons for main window
     tk.Button(frame, bg='springgreen3', text="Start", font=('Impact', 25), width=25, command=lambda screen_name="pick": switch_screen(screen_name)).grid(row=0, column=0, pady=10)
     tk.Button(frame, bg='springgreen3', text="Options", font=('Impact', 25), width=25, command=lambda screen_name="options": switch_screen(screen_name)).grid(row=1, column=0, pady=10)
     tk.Button(frame, bg='springgreen3', text="Help", font=('Impact', 25), width=25, command=lambda screen_name="help": switch_screen(screen_name)).grid(row=2, column=0, pady=10)
-
 
 
 def updates():
@@ -619,11 +627,9 @@ def match_result(entry, bracket):
             bracket.match_winner(entry)
         pressed = True
 
+
 def on_closing():
     root.destroy()  # End when closed
-
-
-
 
 
 if __name__ == '__main__':
