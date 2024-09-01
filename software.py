@@ -179,7 +179,6 @@ def del_competitor(bracket, competitor_name):
 
 
 def add_competitor(bracket, competitor_name):
-    print(bracket.get_bracket_name())
     global pressed
     # Make sure competitor name isn't nothing
     if competitor_name.get().strip() != "":
@@ -350,7 +349,6 @@ def draw_bracket_window(bracket, frame):
 
 
 def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
-    print(brackets_button_num_ref)
     global menu_string, brackets_button_num, pressed, title, prev_menu_string
     # Depending on the menu_string alter the screen variables to fit that screen
     if string == "main":
@@ -518,7 +516,6 @@ def draw_brackets_window(frame):
                 weight_class_checkers_2[i] = tk.IntVar()
     submit = tk.Button(frame2, text="Submit",
                        command=lambda name=input_var: add_to_brackets(name))
-    print(len(frames))
     submit.grid(row=len(frames) + 2, column=0)
 
 
