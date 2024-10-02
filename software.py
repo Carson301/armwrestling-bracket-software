@@ -114,15 +114,25 @@ def reset_start_frame():
                             command=lambda menu=prev_menu_string: switch_screen(menu))
         go_back.grid(row=0, column=0)
     if menu_string == "bracket":
+        clear = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
+                          text="Clear", font=('Sans-Serif 8 bold'), command=lambda: clear_bracket())
+        clear.grid(row=0, column=1)
         reset = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
-                          text="Reset", font=('Sans-Serif 8 bold'), command=lambda: clear_bracket())
-        reset.grid(row=0, column=1)
+                          text="Reset", font=('Sans-Serif 8 bold'), command=lambda: reset_bracket())
+        reset.grid(row=0, column=2)
 
+
+def reset_bracket():
+    if tk.messagebox.askokcancel(title="Reseting bracket", message="Do you really want to reset the bracket?"):
+        brackets.get_tournament()[brackets_button_num].do_bracket_creation_functions()
+        switch_screen("bracket", title, brackets_button_num)
 
 def clear_bracket():
-    for bracket in brackets.get_tournament():
-        if bracket.get_bracket_name() == title:
-            bracket.clear_bracket()
+    if brackets.get_tournament()[brackets_button_num].get_num_competitors() == 0:
+        messagebox.showerror('Error', 'Error: Bracket is already clear.')
+    else:
+        if tk.messagebox.askokcancel(title="Clearing bracket", message="Do you really want to clear the bracket?"):
+            brackets.get_tournament()[brackets_button_num].clear_bracket()
             switch_screen("bracket", title, brackets_button_num)
 
 

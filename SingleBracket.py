@@ -24,6 +24,11 @@ class SingleBracket(Bracket):
     def get_bracket_name(self):
         return self.bracket_name
 
+    def do_bracket_creation_functions(self):
+        self.create_bracket()
+        self.fill_bracket()
+        self.account_for_bys()
+
     def create_bracket(self):
         self.node_list = []
         # Calculates the number of nodes for a complete bracket given a number of competitors
