@@ -123,9 +123,12 @@ def reset_start_frame():
 
 
 def reset_bracket():
-    if tk.messagebox.askokcancel(title="Reseting bracket", message="Do you really want to reset the bracket?"):
-        brackets.get_tournament()[brackets_button_num].do_bracket_creation_functions()
-        switch_screen("bracket", title, brackets_button_num)
+    if brackets.get_tournament()[brackets_button_num].get_num_competitors() < 2:
+        messagebox.showerror('Error', 'Error: Not enough competitors to reset.')
+    else:
+        if tk.messagebox.askokcancel(title="Reseting bracket", message="Do you really want to reset the bracket?"):
+            brackets.get_tournament()[brackets_button_num].do_bracket_creation_functions()
+            switch_screen("bracket", title, brackets_button_num)
 
 def clear_bracket():
     if brackets.get_tournament()[brackets_button_num].get_num_competitors() == 0:
@@ -387,11 +390,25 @@ def draw_bracket_window(bracket, frame):
         buttons.append(tk.Button(frame, background="springgreen3", activebackground="springgreen4", fg="white", text=levels[len(levels) - 1][0].get_value(), font=('Serif-Sans 8 bold'), command=lambda node_count_ref=bracket.get_num_nodes() - 1: match_result(node_count_ref, bracket)))
         buttons[len(buttons) - 1].grid(row=2, column=int(bracket.get_num_levels() / 2), sticky=tk.W + tk.E, padx=5, pady=0)
 
+def draw_options_window(frame):
+    label = tk.Label(frame, text="Not yet implemented")
+    label.pack()
 
+def draw_help_window(frame):
+    label = tk.Label(frame, text="Not yet implemented")
+    label.pack()
 def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
     global menu_string, brackets_button_num, pressed, title, prev_menu_string, check_button
     # Depending on the menu_string alter the screen variables to fit that screen
     error_occurred = False
+    if string == "options":
+        title = "Arm Wrestling Tournament"
+        brackets_button_num = 0
+        prev_menu_string = "main"
+    if string == "help":
+        title = "Arm Wrestling Tournament"
+        prev_menu_string = "main"
+        brackets_button_num = 0
     if string == "main":
         title = "Arm Wrestling Tournament"
         brackets_button_num = 0
@@ -530,8 +547,10 @@ def draw_brackets_window(frame):
     canvas2 = tk.Canvas(frame2, highlightthickness=0, bg="Azure", relief="solid")
     yscrollbar = tk.Scrollbar(frame2, orient="vertical", command=canvas2.yview)
     yscrollbar.pack(side="right", fill="y")
+    frame3 = tk.Frame(frame2, borderwidth=2, relief="solid")
+    frame3.pack(side="top")
     canvas2.pack(side="top", fill="both", expand=True)
-    canvas2.configure(yscrollcommand=yscrollbar.set, bg='seashell3', width=150)
+    canvas2.configure(yscrollcommand=yscrollbar.set, bg='seashell3', width=160)
     frame_new = tk.Frame(canvas2, bg="seashell3")
     canvas2.create_window((0, 0), window=frame_new, anchor="center")
     frame_new.bind('<Configure>', set_scrollregion1)
@@ -540,8 +559,8 @@ def draw_brackets_window(frame):
         frame_new.columnconfigure(i, minsize=0, weight=0)
     # Create an entry field to take in the input of a competitor name to add to bracket
     input_var = tk.StringVar()
-    competitor_entry = tk.Entry(frame_new, textvariable=input_var, width=15)
-    competitor_entry.grid(row=0, column=0, pady=5)
+    competitor_entry = tk.Entry(frame3, textvariable=input_var, width=15)
+    competitor_entry.grid(row=0, column=0, pady=5, padx=5)
     frame_count = -1
     frames = []
     for key in check_button:
@@ -569,14 +588,14 @@ def draw_brackets_window(frame):
                                    onvalue=1,
                                    offvalue=0,
                                    height=1,
-                                   width=15))
+                                   width=17))
                 weight_class_checkers_2[i] = var
                 check_buttons[button_count].grid(row=i + 1, column=0)
             else:
                 weight_class_checkers_2[i] = tk.IntVar()
-    submit = tk.Button(frame_new, text="Submit", bg='seashell4',
+    submit = tk.Button(frame3, text="Submit", bg='seashell4',
                        command=lambda name=input_var: add_to_brackets(name))
-    submit.grid(row=len(frames) + 2, column=0)
+    submit.grid(row=0, column=1, pady=5, padx=5)
 
 
 def draw_menu_window(frame):
@@ -660,6 +679,10 @@ def updates():
         count4 = 0
         reset_start_frame()
         frame = draw_scrollbar()
+        if menu_string == "options":
+            draw_options_window(frame)
+        if menu_string == "help":
+            draw_help_window(frame)
         if menu_string == "main":
             count3 = 10
             count4 = 10
