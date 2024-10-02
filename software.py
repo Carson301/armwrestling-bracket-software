@@ -366,26 +366,37 @@ def draw_bracket_window(bracket, frame):
 
 
 def switch_screen(string, bracket_name=None, brackets_button_num_ref=None):
-    global menu_string, brackets_button_num, pressed, title, prev_menu_string
+    global menu_string, brackets_button_num, pressed, title, prev_menu_string, check_button
     # Depending on the menu_string alter the screen variables to fit that screen
+    error_occurred = False
     if string == "main":
         title = "Arm Wrestling Tournament"
         brackets_button_num = 0
     if string == "pick":
         prev_menu_string = "main"
     if string == "brackets":
-        if menu_string != "bracket":
-            create_tournament()
-        title = "Arm Wrestling Tournament"
-        brackets_button_num = 0
-        prev_menu_string = "pick"
+        at_least_one = False
+        for key in check_button:
+            for i in range(len(check_button[key][1][1])):
+                if check_button[key][1][1][i].get() == 1:
+                    at_least_one = True
+        if at_least_one:
+            if menu_string != "bracket":
+                create_tournament()
+            title = "Arm Wrestling Tournament"
+            brackets_button_num = 0
+            prev_menu_string = "pick"
+        else:
+            messagebox.showerror('Error', 'Error: Must choose at least 1 class.')
+            error_occurred = True
     if string == "bracket":
         title = bracket_name
         brackets_button_num = brackets_button_num_ref
         prev_menu_string = "brackets"
     # Set menu_string to the new screen name
-    menu_string = string
-    pressed = True
+    if not error_occurred:
+        menu_string = string
+        pressed = True
 
 
 def add_to_brackets(name):
