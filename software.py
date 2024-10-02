@@ -115,14 +115,14 @@ def reset_start_frame():
         go_back.grid(row=0, column=0)
     if menu_string == "bracket":
         reset = tk.Button(buttons_frame, background="springgreen3", activebackground="springgreen4", fg="black",
-                          text="Reset", font=('Sans-Serif 8 bold'), command=lambda: reset_bracket())
+                          text="Reset", font=('Sans-Serif 8 bold'), command=lambda: clear_bracket())
         reset.grid(row=0, column=1)
 
 
-def reset_bracket():
+def clear_bracket():
     for bracket in brackets.get_tournament():
         if bracket.get_bracket_name() == title:
-            bracket.reset_bracket()
+            bracket.clear_bracket()
             switch_screen("bracket", title, brackets_button_num)
 
 
