@@ -19,6 +19,7 @@ buttons_frame = tk.Frame(start_frame, bg="red")
 frame2 = tk.Frame(start_frame, bg="red")
 # Canvas for scrollbars
 canvas = tk.Canvas(start_frame)
+canvas2 = tk.Canvas(frame2)
 
 # Title for current screen
 title = "Arm Wrestling Tournament"
@@ -167,6 +168,10 @@ def draw_scrollbar():
 def set_scrollregion(event):
     global canvas
     canvas.configure(scrollregion=canvas.bbox('all'))
+
+def set_scrollregion1(event):
+    global canvas2
+    canvas2.configure(scrollregion=canvas2.bbox('all'))
 
 
 def del_competitor(bracket, competitor_name):
@@ -475,12 +480,21 @@ def draw_brackets_window(frame):
 
 # Begin making check box in this window
 
+    global canvas2
+    canvas2 = tk.Canvas(frame2, highlightthickness=0, bg="Azure", relief="solid")
+    yscrollbar = tk.Scrollbar(frame2, orient="vertical", command=canvas2.yview)
+    yscrollbar.pack(side="right", fill="y")
+    canvas2.pack(side="top", fill="both", expand=True)
+    canvas2.configure(yscrollcommand=yscrollbar.set, bg='seashell3', width=150)
+    frame_new = tk.Frame(canvas2, bg="seashell3")
+    canvas2.create_window((0, 0), window=frame_new, anchor="center")
+    frame_new.bind('<Configure>', set_scrollregion1)
     # Make columns for frame2
     for i in range(3):
-        frame2.columnconfigure(i, minsize=10, weight=0)
+        frame_new.columnconfigure(i, minsize=0, weight=0)
     # Create an entry field to take in the input of a competitor name to add to bracket
     input_var = tk.StringVar()
-    competitor_entry = tk.Entry(frame2, textvariable=input_var, width=15)
+    competitor_entry = tk.Entry(frame_new, textvariable=input_var, width=15)
     competitor_entry.grid(row=0, column=0, pady=5)
     frame_count = -1
     frames = []
@@ -494,17 +508,17 @@ def draw_brackets_window(frame):
         for i in range(len(weight_class_checkers_2)):
             if weight_class_checkers[i].get() == 1:
                 if button_count == -1:
-                    frames.append(tk.Frame(frame2, borderwidth=2, relief='solid'))
+                    frames.append(tk.Frame(frame_new, borderwidth=2, relief='solid'))
                     frames[len(frames) - 1].grid(row=len(frames) + 1, column=0, sticky='ns')
-                    label = tk.Label(frames[len(frames) - 1], text=key, font='bold', bg="springgreen3")
-                    label.grid(row=0, column=0)
+                    label = tk.Label(frames[len(frames) - 1], text=key, font='bold', bg="seashell4")
+                    label.grid(row=0, column=0, sticky='ew')
                     frame_count += 1
                 button_count += 1
 
                 # For each weight_class_checker create a corresponding check button
                 var = tk.IntVar()
                 check_buttons.append(
-                    tk.Checkbutton(frames[frame_count], bg="springgreen3", font='Arial 10 bold', text=weight_class_names[i],
+                    tk.Checkbutton(frames[frame_count], bg="seashell3", font='Arial 10 bold', text=weight_class_names[i],
                                    variable=var,
                                    onvalue=1,
                                    offvalue=0,
@@ -514,7 +528,7 @@ def draw_brackets_window(frame):
                 check_buttons[button_count].grid(row=i + 1, column=0)
             else:
                 weight_class_checkers_2[i] = tk.IntVar()
-    submit = tk.Button(frame2, text="Submit",
+    submit = tk.Button(frame_new, text="Submit", bg='seashell4',
                        command=lambda name=input_var: add_to_brackets(name))
     submit.grid(row=len(frames) + 2, column=0)
 
