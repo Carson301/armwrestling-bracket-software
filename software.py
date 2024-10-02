@@ -137,7 +137,7 @@ def draw_scrollbar():
     global canvas, start_frame, menu_string
 
     # Create a canvas
-    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure", borderwidth=3, relief="solid")
+    canvas = tk.Canvas(start_frame, highlightthickness=0, bg="Azure", relief="solid")
 
     # Create scrollbars
     xscrollbar = tk.Scrollbar(start_frame, orient="horizontal", command=canvas.xview)
@@ -440,7 +440,6 @@ def add_to_brackets(name):
 
 
 def draw_brackets_window(frame):
-    print(1)
     global buttons, frame2, check_button
     button_names = []
     frames = []
@@ -462,13 +461,13 @@ def draw_brackets_window(frame):
         if i < 6:
             column_counter += 1
             frames.append(tk.Frame(frame_one, relief='solid', borderwidth=2, bg="springgreen3"))
-            frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
+            frames[i].grid(row=row_counter, column=column_counter, sticky='news')
             if i == 5:
                 column_counter = -1
         else:
             column_counter += 1
             frames.append(tk.Frame(frame_two, relief='solid', borderwidth=2, bg="springgreen3"))
-            frames[i].grid(row=row_counter, column=column_counter, sticky='ns')
+            frames[i].grid(row=row_counter, column=column_counter, sticky='news')
     frame_count = -1
     buttons = []
     for key in check_button:
@@ -615,8 +614,12 @@ def updates():
         reset_start_frame()
         frame = draw_scrollbar()
         if menu_string == "main":
+            count3 = 10
+            count4 = 10
             draw_main_window(frame)
         if menu_string == "pick":
+            count3 = 10
+            count4 = 10
             # Reset check_button
             for key in check_button:
                 check_button[key][0].clear()
