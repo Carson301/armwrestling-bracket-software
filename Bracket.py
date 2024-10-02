@@ -22,6 +22,10 @@ class Bracket(ABC):
         self.competitor_list.remove(competitor)
         self.num_competitors = len(self.competitor_list)
 
+    def reset_bracket(self):
+        self.competitor_list = []
+        self.num_competitors = 0
+
     @abstractmethod
     def create_bracket(self):
         ...
