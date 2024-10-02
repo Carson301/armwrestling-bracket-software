@@ -607,6 +607,19 @@ def draw_menu_window(frame):
     # Create a button for submitting the check buttons
     submit = tk.Button(frame, text="Submit", command=lambda screen_name="brackets": switch_screen(screen_name))
     submit.grid(row=2, column=0)
+    check_all = tk.Button(frame, text="Check All", command=lambda on=1: check_all_buttons(on))
+    uncheck_all = tk.Button(frame, text="Uncheck All", command=lambda on=0: check_all_buttons(on))
+    check_all.grid(row=3, column=0)
+    uncheck_all.grid(row=4, column=0)
+
+def check_all_buttons(on):
+    if on:
+        value = 1
+    else:
+        value = 0
+    for key in check_button:
+        for i in range(len(check_button[key][1][1])):
+            check_button[key][1][1][i].set(value)
 
 
 def draw_main_window(frame):
