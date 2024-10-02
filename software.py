@@ -11,6 +11,9 @@ from tkinter import messagebox
 # The root of the window
 root = tk.Tk()
 
+count3 = 0
+count4 = 0
+
 # A frame to place all other widgets within
 start_frame = tk.Frame(root, bg="white")
 # A frame for buttons at the top of the screen
@@ -167,11 +170,20 @@ def draw_scrollbar():
 
 def set_scrollregion(event):
     global canvas
+    global count4
     canvas.configure(scrollregion=canvas.bbox('all'))
+    if count4 < 4:
+        count4 += 1
+        canvas.yview_moveto(0)
 
 def set_scrollregion1(event):
     global canvas2
+    global count3
     canvas2.configure(scrollregion=canvas2.bbox('all'))
+    if count3 < 4:
+        count3 += 1
+        canvas2.yview_moveto(0)
+
 
 
 def del_competitor(bracket, competitor_name):
@@ -428,6 +440,7 @@ def add_to_brackets(name):
 
 
 def draw_brackets_window(frame):
+    print(1)
     global buttons, frame2, check_button
     button_names = []
     frames = []
@@ -595,8 +608,10 @@ def draw_main_window(frame):
 
 
 def updates():
-    global buttons, lines, pressed, start_frame, node_button_num, brackets_button_num, menu_string
+    global buttons, lines, pressed, start_frame, node_button_num, brackets_button_num, menu_string, count3, count4
     if pressed:
+        count3 = 0
+        count4 = 0
         reset_start_frame()
         frame = draw_scrollbar()
         if menu_string == "main":
