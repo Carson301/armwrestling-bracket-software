@@ -646,8 +646,6 @@ def updates():
             # Reset check_button
             for key in check_button:
                 check_button[key][0].clear()
-                for var in check_button[key][1][1]:
-                    var = 0
             # Reset buttons
             buttons.clear()
             draw_brackets_window(frame)
